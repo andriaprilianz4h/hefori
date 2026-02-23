@@ -3,7 +3,17 @@ definePageMeta({
   layout: 'default'
 })
 
-const form = reactive({
+interface BookingForm {
+  mrn: string
+  ksm: string
+  dokter: string
+  prosedur: string
+  estimasi: number
+  tanggal: string
+  catatan: string
+}
+
+const form = reactive<BookingForm>({
   mrn: '',
   ksm: '',
   dokter: '',
@@ -14,10 +24,143 @@ const form = reactive({
 })
 
 const ksmOptions = [
-  { label: 'Bedah Umum', value: 'bedah' },
-  { label: 'Obgyn', value: 'obgyn' },
-  { label: 'Ortopedi', value: 'ortopedi' }
+  { label: 'Bedah Umum', value: 'bedah-umum' },
+  {
+    label: 'Bedah Toraks, Kardiak dan Vaskular',
+    value: 'bedah-toraks-kardiak-vaskular'
+  },
+  { label: 'Radioterapi', value: 'radioterapi' },
+  {
+    label: 'Bedah Plastik Rekonstruksi dan Estetik',
+    value: 'bedah-plastik-rekonstruksi-estetik'
+  },
+  { label: 'Bedah Syaraf', value: 'bedah-syaraf' },
+  { label: 'Orthopedi dan Traumatologi', value: 'orthopedi-traumatologi' },
+  { label: 'Urologi', value: 'urologi' },
+  { label: 'Obstetri Ginekologi', value: 'obstetri-ginekologi' },
+  { label: 'Ilmu Kesehatan Anak', value: 'ilmu-kesehatan-anak' },
+  { label: 'Penyakit Dalam', value: 'penyakit-dalam' },
+  {
+    label: 'Kardiologi dan Kedokteran Vaskular',
+    value: 'kardiologi-kedokteran-vaskular'
+  },
+  {
+    label: 'Pulmonologi dan Ilmu Kedokteran Respirasi',
+    value: 'pulmonologi-kedokteran-respirasi'
+  },
+  { label: 'Ilmu Kesehatan Mata', value: 'ilmu-kesehatan-mata' },
+  { label: 'THT-KL', value: 'tht-kl' },
+  { label: 'Kesehatan Kulit dan Kelamin', value: 'kulit-dan-kelamin' },
+  { label: 'Neurologi', value: 'neurologi' },
+  { label: 'Andrologi', value: 'andrologi' },
+  { label: 'Kedokteran Jiwa', value: 'kedokteran-jiwa' },
+  { label: 'Mikrobiologi Klinik', value: 'mikrobiologi-klinik' },
+  { label: 'Radiologi', value: 'radiologi' },
+  { label: 'Kesehatan Gigi dan Mulut', value: 'kesehatan-gigi-mulut' },
+  { label: 'Patologi Klinik', value: 'patologi-klinik' },
+  { label: 'Patologi Anatomi', value: 'patologi-anatomi' },
+  { label: 'Anestesiologi dan Reanimasi', value: 'anestesiologi-reanimasi' },
+  { label: 'Dokter Umum', value: 'dokter-umum' },
+  {
+    label: 'Kedokteran Fisik dan Rehabilitasi',
+    value: 'kedokteran-fisik-rehabilitasi'
+  },
+  {
+    label: 'Kedokteran Forensik dan Medikolegal',
+    value: 'forensik-medikolegal'
+  },
+  { label: 'Paliatif', value: 'paliatif' }
 ]
+const dokterByKsm: Record<string, { label: string, value: string }[]> = {
+  'bedah-umum': [
+    { label: 'Dr. Ahmad Sp.B', value: 'ahmad' },
+    { label: 'Dr. Rina Sp.B', value: 'rina' }
+  ],
+  'bedah-toraks-kardiak-vaskular': [
+    { label: 'Dr. Surya Sp.BTKV', value: 'surya' }
+  ],
+  'radioterapi': [{ label: 'Dr. Lestari Sp.Onk.Rad', value: 'lestari' }],
+  'bedah-plastik-rekonstruksi-estetik': [
+    { label: 'Dr. Maya Sp.BP-RE', value: 'maya' }
+  ],
+  'bedah-syaraf': [{ label: 'Dr. Andika Sp.BS', value: 'andika' }],
+  'orthopedi-traumatologi': [{ label: 'Dr. Dedi Sp.OT', value: 'dedi' }],
+  'urologi': [{ label: 'Dr. Fajar Sp.U', value: 'fajar' }],
+  'obstetri-ginekologi': [{ label: 'Dr. Sinta Sp.OG', value: 'sinta' }],
+  'ilmu-kesehatan-anak': [{ label: 'Dr. Rudi Sp.A', value: 'rudi' }],
+  'penyakit-dalam': [{ label: 'Dr. Hasan Sp.PD', value: 'hasan' }],
+  'kardiologi-kedokteran-vaskular': [
+    { label: 'Dr. Taufik Sp.JP', value: 'taufik' }
+  ],
+  'pulmonologi-kedokteran-respirasi': [
+    { label: 'Dr. Dimas Sp.P', value: 'dimas' }
+  ],
+  'ilmu-kesehatan-mata': [{ label: 'Dr. Yuli Sp.M', value: 'yuli' }],
+  'tht-kl': [{ label: 'Dr. Bagus Sp.THT-KL', value: 'bagus' }],
+  'kulit-dan-kelamin': [{ label: 'Dr. Nita Sp.KK', value: 'nita' }],
+  'neurologi': [{ label: 'Dr. Bima Sp.N', value: 'bima' }],
+  'andrologi': [{ label: 'Dr. Yoga Sp.And', value: 'yoga' }],
+  'kedokteran-jiwa': [{ label: 'Dr. Rani Sp.KJ', value: 'rani' }],
+  'mikrobiologi-klinik': [{ label: 'Dr. Anton Sp.MK', value: 'anton' }],
+  'radiologi': [{ label: 'Dr. Fina Sp.Rad', value: 'fina' }],
+  'kesehatan-gigi-mulut': [{ label: 'Dr. Aldi Sp.KG', value: 'aldi' }],
+  'patologi-klinik': [{ label: 'Dr. Sari Sp.PK', value: 'sari' }],
+  'patologi-anatomi': [{ label: 'Dr. Dewa Sp.PA', value: 'dewa' }],
+  'anestesiologi-reanimasi': [{ label: 'Dr. Putra Sp.An', value: 'putra' }],
+  'dokter-umum': [{ label: 'Dr. Lina', value: 'lina' }],
+  'kedokteran-fisik-rehabilitasi': [
+    { label: 'Dr. Joko Sp.KFR', value: 'joko' }
+  ],
+  'forensik-medikolegal': [{ label: 'Dr. Rizal Sp.FM', value: 'rizal' }],
+  'paliatif': [{ label: 'Dr. Eva Sp.Paliatif', value: 'eva' }]
+}
+
+/* =======================
+   COMPUTED DOKTER
+======================= */
+const dokterOptions = computed(() => {
+  return dokterByKsm[form.ksm] || []
+})
+
+/* Reset dokter jika KSM berubah */
+watch(
+  () => form.ksm,
+  () => {
+    form.dokter = ''
+  }
+)
+/* ================= UPLOAD STATE ================= */
+
+// FIX: Use definite assignment assertion or ensure keys exist
+const files = ref<Record<string, File[]>>({
+  mrs: [],
+  rto: [],
+  penunjang: []
+})
+
+const previewFile = ref<string | null>(null)
+const activePreview = ref<File | null>(null)
+
+/* ================= HANDLER ================= */
+
+const handleFile = (event: Event, key: string) => {
+  const target = event.target as HTMLInputElement
+  if (!target.files) return
+
+  // FIX: Use non-null assertion since we know the key exists in our files object
+  files.value[key]!.push(...Array.from(target.files))
+  target.value = ''
+}
+
+const removeFile = (key: string, index: number) => {
+  // FIX: Use non-null assertion since we know the key exists
+  files.value[key]!.splice(index, 1)
+}
+
+const openPreview = (file: File) => {
+  previewFile.value = URL.createObjectURL(file)
+  activePreview.value = file
+}
 </script>
 
 <template>
@@ -79,15 +222,19 @@ const ksmOptions = [
         <!-- BARIS 1 -->
         <div class="md:col-span-3">
           <UFormField
-            label="KSM *"
+            label="KSM"
             name="ksm"
-            :ui="{ label: 'text-sm font-medium text-gray-700 mb-0.5' }"
+            required
           >
-            <USelect
+            <USelectMenu
               v-model="form.ksm"
-              :options="ksmOptions"
-              size="lg"
+              :items="ksmOptions"
+              value-key="value"
+              option-attribute="label"
+              searchable
+              placeholder="Pilih KSM"
               class="w-full"
+              size="lg"
             />
           </UFormField>
         </div>
@@ -98,10 +245,16 @@ const ksmOptions = [
             name="dokter"
             :ui="{ label: 'text-sm font-medium text-gray-700 mb-0.5' }"
           >
-            <UInput
+            <USelectMenu
               v-model="form.dokter"
+              :items="dokterOptions"
+              value-key="value"
+              option-attribute="label"
+              searchable
+              placeholder="Pilih Dokter"
               size="lg"
               class="w-full"
+              :disabled="!form.ksm"
             />
           </UFormField>
         </div>
@@ -181,54 +334,99 @@ const ksmOptions = [
       </template>
 
       <div class="grid md:grid-cols-3 gap-6">
-        <div class="rounded-xl p-5 flex justify-between items-center border">
-          <div class="flex items-center gap-3">
+        <div
+          v-for="doc in [
+            { label: 'Surat MRS *', key: 'mrs' },
+            { label: 'Surat RTO *', key: 'rto' },
+            { label: 'Hasil Penunjang', key: 'penunjang' }
+          ]"
+          :key="doc.key"
+          class="rounded-xl p-6 border-2 border-dashed border-gray-300 hover:border-primary-500 transition bg-gray-50"
+        >
+          <div class="text-center">
             <UIcon
-              name="i-heroicons-document-text"
-              class="w-5 h-5 text-emerald-500"
+              name="i-heroicons-cloud-arrow-up"
+              class="w-10 h-10 text-primary-500 mb-3"
             />
-            <span class="font-medium"> Surat MRS * </span>
-          </div>
-          <UButton
-            size="sm"
-            variant="soft"
-          >
-            Upload
-          </UButton>
-        </div>
 
-        <div class="rounded-xl p-5 flex justify-between items-center border">
-          <div class="flex items-center gap-3">
-            <UIcon
-              name="i-heroicons-document-text"
-              class="w-5 h-5 text-emerald-500"
-            />
-            <span class="font-medium"> Surat RTO * </span>
-          </div>
-          <UButton
-            size="sm"
-            variant="soft"
-          >
-            Upload
-          </UButton>
-        </div>
+            <p class="font-medium mb-3">
+              {{ doc.label }}
+            </p>
 
-        <div class="rounded-xl p-5 flex justify-between items-center border">
-          <div class="flex items-center gap-3">
-            <UIcon
-              name="i-heroicons-document-text"
-              class="w-5 h-5 text-emerald-500"
-            />
-            <span class="font-medium"> Hasil Penunjang </span>
+            <label>
+              <UButton
+                size="sm"
+                variant="soft"
+                as="span"
+              > Pilih File </UButton>
+
+              <input
+                type="file"
+                multiple
+                class="hidden"
+                @change="handleFile($event, doc.key)"
+              >
+            </label>
+
+            <!-- FILE LIST -->
+            <div v-if="activePreview?.type?.includes('image')">
+              class="mt-4 space-y-2 text-sm" >
+              <div
+                v-for="(file, index) in files[doc.key]"
+                :key="index"
+                class="flex justify-between items-center bg-white p-2 rounded-lg shadow-sm"
+              >
+                <span class="truncate max-w-37.5">
+                  {{ file.name }}
+                </span>
+
+                <div class="flex gap-2">
+                  <UButton
+                    size="sm"
+                    variant="soft"
+                    color="primary"
+                    @click="openPreview(file)"
+                  >
+                    Preview
+                  </UButton>
+
+                  <UButton
+                    size="sm"
+                    variant="soft"
+                    color="error"
+                    @click="removeFile(doc.key, index)"
+                  >
+                    ✕
+                  </UButton>
+                </div>
+              </div>
+            </div>
           </div>
-          <UButton
-            size="sm"
-            variant="soft"
-          >
-            Upload
-          </UButton>
         </div>
       </div>
+
+      <!-- PREVIEW MODAL -->
+      <!-- PREVIEW MODAL -->
+      <UModal v-model="previewFile">
+        <div class="p-4">
+          <!-- FIX: Use double optional chaining ?.?. or check existence first -->
+          <template v-if="activePreview?.type?.includes('image')">
+            <img
+              v-if="previewFile"
+              :src="previewFile"
+              class="w-full rounded-xl"
+            >
+          </template>
+
+          <template v-else>
+            <iframe
+              v-if="previewFile"
+              :src="previewFile"
+              class="w-full h-125 rounded-xl"
+            />
+          </template>
+        </div>
+      </UModal>
     </UCard>
 
     <div class="flex justify-end pt-4">

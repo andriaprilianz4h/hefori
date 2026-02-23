@@ -95,7 +95,7 @@ function toggleSidebar() {
       <!-- Header -->
       <div
         :class="[
-          'h-16 flex items-center px-4 border-b border-gray-200',
+          'h-16 flex items-center px-4 border-b border-gray-200 shadow-sm',
           isCollapsed ? 'lg:justify-center' : 'justify-between'
         ]"
       >
