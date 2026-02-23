@@ -67,65 +67,104 @@ const ksmOptions = [
     <!-- ================= DETAIL ================= -->
     <UCard
       class="w-full rounded-2xl shadow-none border-0"
-      :ui="{ header: 'border-0 pb-2' }"
+      :ui="{ header: 'border-0 pb-6' }"
     >
       <template #header>
-        <h2 class="text-xl font-semibold">
+        <h2 class="text-xl font-bold">
           Detail Permintaan Operasi
         </h2>
       </template>
 
-      <div class="grid md:grid-cols-4 gap-8">
-        <div class="space-y-2">
-          <label class="text-sm text-gray-500">KSM *</label>
-          <USelect
-            v-model="form.ksm"
-            :options="ksmOptions"
-            size="lg"
-          />
+      <div class="grid md:grid-cols-6 gap-4 -mt-4">
+        <!-- BARIS 1 -->
+        <div class="md:col-span-3">
+          <UFormField
+            label="KSM *"
+            name="ksm"
+            :ui="{ label: 'text-sm font-medium text-gray-700 mb-0.5' }"
+          >
+            <USelect
+              v-model="form.ksm"
+              :options="ksmOptions"
+              size="lg"
+              class="w-full"
+            />
+          </UFormField>
         </div>
 
-        <div class="space-y-2">
-          <label class="text-sm text-gray-500">Dokter Operator *</label>
-          <UInput
-            v-model="form.dokter"
-            size="lg"
-          />
+        <div class="md:col-span-3">
+          <UFormField
+            label="Dokter Operator *"
+            name="dokter"
+            :ui="{ label: 'text-sm font-medium text-gray-700 mb-0.5' }"
+          >
+            <UInput
+              v-model="form.dokter"
+              size="lg"
+              class="w-full"
+            />
+          </UFormField>
         </div>
 
-        <div class="space-y-2">
-          <label class="text-sm text-gray-500">Jenis Prosedur *</label>
-          <UInput
-            v-model="form.prosedur"
-            size="lg"
-          />
+        <!-- BARIS 2 -->
+        <div class="md:col-span-2">
+          <UFormField
+            label="Jenis Prosedur *"
+            name="prosedur"
+            :ui="{ label: 'text-sm font-medium text-gray-700 mb-0.5' }"
+          >
+            <UInput
+              v-model="form.prosedur"
+              size="lg"
+              class="w-full"
+            />
+          </UFormField>
         </div>
 
-        <div class="space-y-2">
-          <label class="text-sm text-gray-500">Estimasi Waktu (jam) *</label>
-          <UInput
-            v-model="form.estimasi"
-            type="number"
-            size="lg"
-          />
+        <div class="md:col-span-2">
+          <UFormField
+            label="Estimasi Waktu (jam) *"
+            name="estimasi"
+            :ui="{ label: 'text-sm font-medium text-gray-700 mb-0.5' }"
+          >
+            <UInput
+              v-model="form.estimasi"
+              type="number"
+              size="lg"
+              class="w-full"
+            />
+          </UFormField>
         </div>
 
-        <div class="space-y-2 md:col-span-2">
-          <label class="text-sm text-gray-500">Tanggal Preferensi</label>
-          <UInput
-            v-model="form.tanggal"
-            type="date"
-            size="lg"
-          />
+        <div class="md:col-span-2">
+          <UFormField
+            label="Tanggal Preferensi"
+            name="tanggal"
+            :ui="{ label: 'text-sm font-medium text-gray-700 mb-0.5' }"
+          >
+            <UInput
+              v-model="form.tanggal"
+              type="date"
+              size="lg"
+              class="w-full"
+            />
+          </UFormField>
         </div>
 
-        <div class="space-y-2 md:col-span-4">
-          <label class="text-sm text-gray-500">Catatan Khusus</label>
-          <UTextarea
-            v-model="form.catatan"
-            :rows="4"
-            size="lg"
-          />
+        <!-- BARIS 3 -->
+        <div class="md:col-span-6">
+          <UFormField
+            label="Catatan Khusus"
+            name="catatan"
+            :ui="{ label: 'text-sm font-medium text-gray-700 mb-0.5' }"
+          >
+            <UTextarea
+              v-model="form.catatan"
+              :rows="4"
+              size="lg"
+              class="w-full"
+            />
+          </UFormField>
         </div>
       </div>
     </UCard>
