@@ -21,7 +21,7 @@ const ksmOptions = [
 </script>
 
 <template>
-  <div class="p-8 space-y-10">
+  <div class="min-h-screen bg-gray-50 p-6 space-y-6">
     <!-- ================= EMR ================= -->
     <UCard
       class="w-full rounded-2xl shadow-none border-0"
