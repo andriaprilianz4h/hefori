@@ -181,12 +181,12 @@ function toggleMobileSearch() {
           <div
             class="w-8 h-8 rounded-full bg-linear-to-br from-green-500 to-green-600 flex items-center justify-center text-white font-bold"
           >
-            A
+            AA
           </div>
 
           <div class="hidden md:block text-left">
             <p class="text-sm font-medium text-gray-700">
-              Admin User
+              Andri Aprilianzah
             </p>
             <p class="text-xs text-gray-500 hidden lg:block">
               Administrator

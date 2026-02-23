@@ -13,7 +13,7 @@ const handleLogout = () => router.push('/login')
         subtitle="Monitoring & Sistem Informasi"
       />
 
-      <main class="flex-1 overflow-auto px-6 py-6">
+      <main class="flex-1 overflow-auto px-1 py-1">
         <slot />
       </main>
     </div>

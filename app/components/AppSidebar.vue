@@ -15,61 +15,43 @@ watch(isMobile, (mobile) => {
   if (!mobile) isMobileOpen.value = false
 })
 
-interface Submenu {
-  name: string
-  icon: string
-  to: string
-}
-
 interface Menu {
   name: string
   icon: string
   to: string
-  submenu?: Submenu[]
 }
 
 const menus: Menu[] = [
-  { name: 'Dashboard', icon: 'fas fa-home', to: '/dashboard' },
+  { name: 'Dashboard', icon: 'heroicons:squares-2x2', to: '/dashboard' },
+  { name: 'Booking', icon: 'heroicons:calendar-days', to: '/booking' },
   {
-    name: 'Finish Goods',
-    icon: 'fas fa-box',
-    to: '#',
-    submenu: [
-      {
-        name: 'Goods Receive',
-        icon: 'fas fa-box-open',
-        to: '/finish-goods/goods-receive'
-      },
-      {
-        name: 'Work In Progress',
-        icon: 'fas fa-cogs',
-        to: '/finish-goods/wip'
-      },
-      {
-        name: 'Finished Products',
-        icon: 'fas fa-check',
-        to: '/finish-goods/finished-products'
-      }
-    ]
+    name: 'Verifikasi Pra-Bedah',
+    icon: 'heroicons:clipboard-document-check',
+    to: '/verifikasi-pra-bedah'
   },
-  { name: 'Reports', icon: 'fas fa-chart-bar', to: '/reports' },
-  { name: 'Settings', icon: 'fas fa-cog', to: '/settings' }
+  {
+    name: 'Manajemen IBP',
+    icon: 'heroicons:building-office-2',
+    to: '/manajemen-ibp'
+  },
+  {
+    name: 'Serah Terima',
+    icon: 'heroicons:arrows-right-left',
+    to: '/serah-terima'
+  },
+  {
+    name: 'Durante Operasi',
+    icon: 'heroicons:plus-circle',
+    to: '/durante-operasi'
+  },
+  { name: 'Laporan', icon: 'heroicons:document-text', to: '/laporan' }
 ]
 
 const currentPath = computed(() => route.path)
-const openSubmenu = ref<string>('')
 
-watch(
-  () => route.path,
-  (newPath) => {
-    const activeMenu = menus.find(menu =>
-      menu.submenu?.some(sub => newPath.startsWith(sub.to))
-    )
-    openSubmenu.value = activeMenu ? activeMenu.name : ''
-    if (isMobile.value) isMobileOpen.value = false
-  },
-  { immediate: true }
-)
+function isActiveMenu(item: Menu): boolean {
+  return currentPath.value.startsWith(item.to)
+}
 
 const sidebarRef = ref<HTMLElement | null>(null)
 
@@ -85,17 +67,6 @@ function toggleSidebar() {
   } else {
     isCollapsed.value = !isCollapsed.value
   }
-}
-
-function toggleSubmenu(name: string) {
-  openSubmenu.value = openSubmenu.value === name ? '' : name
-}
-
-function isActiveMenu(item: Menu): boolean {
-  if (item.submenu) {
-    return item.submenu.some(sub => currentPath.value.startsWith(sub.to))
-  }
-  return currentPath.value.startsWith(item.to)
 }
 </script>
 
@@ -134,131 +105,61 @@ function isActiveMenu(item: Menu): boolean {
             isCollapsed ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden' : ''
           ]"
         >
-          PRO<span class="text-green-600">CIS</span>
+          OPTI<span class="text-green-600">MUM</span>
         </h1>
 
         <button
-          class="bg-green-600 hover:bg-green-700 text-white p-2 rounded-xl transition border-none outline-none focus:outline-none focus:ring-0"
+          class="bg-green-600 hover:bg-green-700 text-white p-2 rounded-xl transition border-none outline-none focus:ring-0"
           @click="toggleSidebar"
         >
-          <i class="fas fa-bars" />
+          <UIcon
+            name="heroicons:bars-3"
+            class="w-5 h-5"
+          />
         </button>
       </div>
 
       <!-- Menu -->
       <nav class="flex-1 px-2 py-6 space-y-1 overflow-y-auto">
-        <div
+        <NuxtLink
           v-for="item in menus"
           :key="item.name"
+          :to="item.to"
+          :class="[
+            'relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group',
+            isCollapsed ? 'lg:justify-center' : '',
+            isActiveMenu(item)
+              ? 'bg-green-50 text-green-700 font-medium'
+              : 'text-gray-600 hover:bg-green-50 hover:text-green-600'
+          ]"
         >
-          <!-- WITHOUT SUBMENU -->
-          <NuxtLink
-            v-if="!item.submenu"
-            :to="item.to"
-            :class="[
-              'relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group',
-              isCollapsed ? 'lg:justify-center' : '',
+          <!-- Left Active Indicator -->
+          <div
+            v-if="isActiveMenu(item)"
+            class="absolute left-0 top-2 bottom-2 w-1 bg-green-600 rounded-r"
+          />
+
+          <!-- Icon -->
+          <UIcon
+            :name="item.icon"
+            class="w-5 h-5"
+            :class="
               isActiveMenu(item)
-                ? 'bg-green-50 text-green-700 font-medium'
-                : 'text-gray-600 hover:bg-green-50 hover:text-green-600'
+                ? 'text-green-600'
+                : 'group-hover:text-green-600'
+            "
+          />
+
+          <!-- Text -->
+          <span
+            :class="[
+              'whitespace-nowrap transition-all duration-300',
+              isCollapsed ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden' : ''
             ]"
           >
-            <!-- Left Indicator -->
-            <div
-              v-if="isActiveMenu(item)"
-              class="absolute left-0 top-2 bottom-2 w-1 bg-green-600 rounded-r"
-            />
-
-            <i
-              :class="[
-                item.icon,
-                isActiveMenu(item)
-                  ? 'text-green-600'
-                  : 'group-hover:text-green-600'
-              ]"
-              class="text-lg"
-            />
-
-            <span
-              :class="[
-                'whitespace-nowrap transition-all duration-300',
-                isCollapsed ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden' : ''
-              ]"
-            >
-              {{ item.name }}
-            </span>
-          </NuxtLink>
-
-          <!-- WITH SUBMENU -->
-          <div v-else>
-            <button
-              :class="[
-                'relative w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group',
-                isCollapsed ? 'lg:justify-center' : '',
-                isActiveMenu(item)
-                  ? 'bg-green-50 text-green-700 font-medium'
-                  : 'text-gray-600 hover:bg-green-50 hover:text-green-600'
-              ]"
-              @click="toggleSubmenu(item.name)"
-            >
-              <div
-                v-if="isActiveMenu(item)"
-                class="absolute left-0 top-2 bottom-2 w-1 bg-green-600 rounded-r"
-              />
-
-              <i
-                :class="[
-                  item.icon,
-                  isActiveMenu(item)
-                    ? 'text-green-600'
-                    : 'group-hover:text-green-600'
-                ]"
-                class="text-lg"
-              />
-
-              <span
-                :class="[
-                  'whitespace-nowrap transition-all duration-300',
-                  isCollapsed ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden' : ''
-                ]"
-              >
-                {{ item.name }}
-              </span>
-
-              <i
-                v-if="!isCollapsed || isMobile"
-                class="fas fa-chevron-right ml-auto text-xs transition-transform duration-200"
-                :class="openSubmenu === item.name ? 'rotate-90' : ''"
-              />
-            </button>
-
-            <!-- Submenu -->
-            <Transition name="slide-down">
-              <div
-                v-if="item.submenu && openSubmenu === item.name"
-                :class="[
-                  'mt-1 space-y-1 border-l border-gray-200 pl-4',
-                  isCollapsed ? 'lg:hidden' : 'ml-4'
-                ]"
-              >
-                <NuxtLink
-                  v-for="sub in item.submenu"
-                  :key="sub.name"
-                  :to="sub.to"
-                  :class="[
-                    'flex items-center gap-3 px-4 py-2 rounded-lg transition text-sm',
-                    currentPath.startsWith(sub.to)
-                      ? 'bg-green-600 text-white'
-                      : 'text-gray-600 hover:bg-green-50 hover:text-green-600'
-                  ]"
-                >
-                  <i :class="sub.icon" />
-                  {{ sub.name }}
-                </NuxtLink>
-              </div>
-            </Transition>
-          </div>
-        </div>
+            {{ item.name }}
+          </span>
+        </NuxtLink>
       </nav>
 
       <!-- Footer -->
@@ -272,7 +173,7 @@ function isActiveMenu(item: Menu): boolean {
           <div
             class="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center text-white font-bold"
           >
-            A
+            AA
           </div>
 
           <div
@@ -282,10 +183,10 @@ function isActiveMenu(item: Menu): boolean {
             ]"
           >
             <p class="font-medium truncate text-gray-800">
-              Admin User
+              Andri Aprilianzah
             </p>
             <p class="text-xs text-gray-400 truncate">
-              admin@procis.com
+              Administrator
             </p>
           </div>
 
@@ -295,7 +196,10 @@ function isActiveMenu(item: Menu): boolean {
               isCollapsed ? 'lg:hidden' : ''
             ]"
           >
-            <i class="fas fa-sign-out-alt" />
+            <UIcon
+              name="heroicons:arrow-right-on-rectangle"
+              class="w-5 h-5"
+            />
           </button>
         </div>
       </div>
@@ -311,15 +215,5 @@ function isActiveMenu(item: Menu): boolean {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-}
-
-.slide-down-enter-active,
-.slide-down-leave-active {
-  transition: all 0.25s ease;
-}
-.slide-down-enter-from,
-.slide-down-leave-to {
-  opacity: 0;
-  transform: translateY(-8px);
 }
 </style>
