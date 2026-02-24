@@ -1,625 +1,1433 @@
 <script setup lang="ts">
-/* =========================
-   FULLCALENDAR
-========================= */
-import FullCalendar from '@fullcalendar/vue3'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import timeGridPlugin from '@fullcalendar/timegrid'
-import interactionPlugin from '@fullcalendar/interaction'
-import type { EventDropArg, EventResizeDoneArg } from '@fullcalendar/core'
+// import type { EventClickArg, EventDropArg } from '@fullcalendar/core'
+// import dayGridPlugin from '@fullcalendar/daygrid'
+// import interactionPlugin from '@fullcalendar/interaction'
+// import timeGridPlugin from '@fullcalendar/timegrid'
+import type { TableColumn } from '@nuxt/ui'
 
+type OperasiRow = JadwalOperasi & { durasi: number }
 definePageMeta({
   layout: 'default',
-  title: 'Manajemen IBP'
+  title: 'Manajemen IBP - Admin OK',
+  pageTransition: false
 })
 
-/* =========================
-   TYPE
-========================= */
+// Dynamic import FullCalendar untuk menghindari SSR issues
+// const FullCalendar = defineAsyncComponent(() =>
+//   import('@fullcalendar/vue3').then(m => m.default)
+// )
 
-interface IBPEvent {
-  id: number
-  title: string
-  start: string | Date
-  end: string | Date
-  ruang: string
+// ==================== TYPES ====================
+
+interface JadwalOperasi {
+  id: string
+  pasien: string
+  noRM: string
+  operator: string
+  asisten: string
+  tindakan: string
+  ruangOK: string
+  ronde: number
+  estimasiDurasi: number // menit
+  tanggal: string
+  start: Date | string
+  end: Date | string
+  status: 'terjadwal' | 'proses' | 'selesai' | 'batal'
   color: string
-  pasien?: string
-  operator?: string
+  sikompasId?: string
 }
 
-/* =========================
-   DATA
-========================= */
+interface RuangOK {
+  id: string
+  nama: string
+  kode: string
+  color: string
+  kapasitasRonde: number
+  fasilitas: string[]
+  isActive: boolean
+}
 
-const ruangOptions = [
-  { label: 'OK 1', value: 'ok-1', color: '#3b82f6' },
-  { label: 'OK 2', value: 'ok-2', color: '#10b981' },
-  { label: 'OK 3', value: 'ok-3', color: '#f59e0b' },
-  { label: 'OK 4', value: 'ok-4', color: '#ef4444' },
-  { label: 'OK 5', value: 'ok-5', color: '#8b5cf6' }
-]
+interface RondeConfig {
+  ronde: number
+  waktuMulai: string
+  waktuSelesai: string
+  durasiDefault: number
+}
 
-/* =========================
-   STATE
-========================= */
+// ==================== DATA ====================
+
+const ruangOKList = ref<RuangOK[]>([
+  {
+    id: 'ok1',
+    kode: 'OK-1',
+    nama: 'OK Utama 1',
+    color: '#3b82f6',
+    kapasitasRonde: 3,
+    fasilitas: ['C-Arm', 'Microscope', 'Ventilator'],
+    isActive: true
+  },
+  {
+    id: 'ok2',
+    kode: 'OK-2',
+    nama: 'OK Utama 2',
+    color: '#10b981',
+    kapasitasRonde: 3,
+    fasilitas: ['C-Arm', 'Laparoscopy Set'],
+    isActive: true
+  },
+  {
+    id: 'ok3',
+    kode: 'OK-3',
+    nama: 'OK Emergency',
+    color: '#f59e0b',
+    kapasitasRonde: 2,
+    fasilitas: ['Ventilator', 'Defibrillator'],
+    isActive: true
+  },
+  {
+    id: 'ok4',
+    kode: 'OK-4',
+    nama: 'OK Khusus',
+    color: '#8b5cf6',
+    kapasitasRonde: 2,
+    fasilitas: ['Microscope', 'Neuro Navigation'],
+    isActive: true
+  },
+  {
+    id: 'ok5',
+    kode: 'OK-5',
+    nama: 'OK Bedah Anak',
+    color: '#ec4899',
+    kapasitasRonde: 2,
+    fasilitas: ['Pediatric Set', 'Warmer'],
+    isActive: true
+  }
+])
+
+const rondeConfig = ref<RondeConfig[]>([
+  { ronde: 1, waktuMulai: '07:00', waktuSelesai: '12:00', durasiDefault: 180 },
+  { ronde: 2, waktuMulai: '12:30', waktuSelesai: '16:00', durasiDefault: 150 },
+  { ronde: 3, waktuMulai: '16:30', waktuSelesai: '20:00', durasiDefault: 150 }
+])
+
+const jadwalList = ref<JadwalOperasi[]>([])
+const selectedEvent = ref<JadwalOperasi | null>(null)
+const isEditMode = ref(false)
+const activeTab = ref('kalender')
+const selectedDate = ref<string>(new Date().toISOString().slice(0, 10))
+const calendarKey = ref(0)
+
+// ==================== FORM STATE ====================
 
 const form = reactive({
-  ruang: '',
-  tanggalMulai: '',
-  tanggalSelesai: '',
   pasien: '',
-  operator: ''
+  noRM: '',
+  operator: '',
+  asisten: '',
+  tindakan: '',
+  ruangOK: '',
+  ronde: 1,
+  estimasiDurasi: 120,
+  tanggal: '',
+  jamMulai: '',
+  sikompasId: ''
+})
+const operasiBerlangsungRows = computed(() => {
+  return jadwalList.value
+    .filter(j => j.status === 'proses')
+    .map(j => ({
+      ...j,
+      durasi: Math.round((Date.now() - new Date(j.start).getTime()) / 60000)
+    }))
 })
 
-const events = ref<IBPEvent[]>([])
-const selectedEvent = ref<IBPEvent | null>(null)
-const isEditMode = ref(false)
+const operasiBerlangsungColumns: TableColumn<OperasiRow>[] = [
+  { accessorKey: 'ruangOK', header: 'Ruang' },
+  { accessorKey: 'pasien', header: 'Pasien' },
+  { accessorKey: 'tindakan', header: 'Tindakan' },
+  { accessorKey: 'operator', header: 'Operator' },
+  { accessorKey: 'start', header: 'Mulai' },
+  { accessorKey: 'durasi', header: 'Durasi (menit)' },
+  { accessorKey: 'estimasiDurasi', header: 'Estimasi' },
+  { accessorKey: 'actions', header: 'Aksi' }
+]
+// ==================== COMPUTED ====================
 
-/* =========================
-   COMPUTED
-========================= */
+// const events = computed(() => {
+//   return jadwalList.value.map(j => ({
+//     id: j.id,
+//     title: `${j.ruangOK} - ${j.pasien} (${j.tindakan})`,
+//     start: j.start,
+//     end: j.end,
+//     backgroundColor: j.color,
+//     borderColor: j.color,
+//     extendedProps: j
+//   }))
+// })
 
-const getRuangColor = (ruang: string) => {
-  const ruangData = ruangOptions.find(r => r.value === ruang)
-  return ruangData?.color || '#6366f1'
-}
-
-const getRuangLabel = (ruangValue: string) => {
-  const ruang = ruangOptions.find(r => r.value === ruangValue)
-  return ruang?.label || ruangValue
-}
-
-const hasConflict = computed(() => {
-  if (!form.ruang || !form.tanggalMulai || !form.tanggalSelesai) return false
-
-  const start = new Date(form.tanggalMulai).getTime()
-  const end = new Date(form.tanggalSelesai).getTime()
-
-  return events.value.some((e) => {
-    if (e.ruang !== form.ruang) return false
-    if (isEditMode.value && e.id === selectedEvent.value?.id) return false
-
-    const eventStart = new Date(e.start).getTime()
-    const eventEnd = new Date(e.end).getTime()
-
-    return (
-      (start >= eventStart && start < eventEnd)
-      || (end > eventStart && end <= eventEnd)
-      || (start <= eventStart && end >= eventEnd)
-    )
-  })
-})
-
-const eventsByRuang = computed(() => {
-  const grouped: Record<string, IBPEvent[]> = {}
-  ruangOptions.forEach((r) => {
-    grouped[r.value] = events.value.filter(e => e.ruang === r.value)
+const jadwalByRuang = computed(() => {
+  const grouped: Record<string, JadwalOperasi[]> = {}
+  ruangOKList.value.forEach((r) => {
+    grouped[r.kode] = jadwalList.value
+      .filter(j => j.ruangOK === r.kode && j.status !== 'batal')
+      .sort(
+        (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime()
+      )
   })
   return grouped
 })
 
-/* =========================
-   METHODS
-========================= */
+const statistikHariIni = computed(() => {
+  const today = new Date().toISOString().split('T')[0]
+  const hariIni = jadwalList.value.filter(j => j.tanggal === today)
 
-const snapTo30Minutes = (date: Date) => {
-  const minutes = date.getMinutes()
-  const snappedMinutes = Math.round(minutes / 30) * 30
-  date.setMinutes(snappedMinutes)
-  date.setSeconds(0)
-  date.setMilliseconds(0)
-  return date
+  return {
+    total: hariIni.length,
+    proses: hariIni.filter(j => j.status === 'proses').length,
+    selesai: hariIni.filter(j => j.status === 'selesai').length,
+    menunggu: hariIni.filter(j => j.status === 'terjadwal').length
+  }
+})
+
+const okTersedia = computed(() => {
+  const today = new Date().toISOString().split('T')[0]
+  return ruangOKList.value.filter((r) => {
+    const jadwalAktif = jadwalList.value.filter(
+      j =>
+        j.ruangOK === r.kode
+        && j.tanggal === today
+        && ['terjadwal', 'proses'].includes(j.status)
+    )
+    return jadwalAktif.length < r.kapasitasRonde
+  })
+})
+
+// ==================== METHODS ====================
+
+const generateId = () =>
+  `IBP-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`
+
+const getRuangColor = (kode: string) => {
+  return ruangOKList.value.find(r => r.kode === kode)?.color || '#6b7280'
 }
 
-const formatDateTime = (date: string | Date) => {
-  const d = new Date(date)
-  return d.toLocaleString('id-ID', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
+const getRuangName = (kode: string) => {
+  return ruangOKList.value.find(r => r.kode === kode)?.nama || kode
+}
+
+const calculateEndTime = (start: Date | string, durasiMenit: number) => {
+  const startDate = new Date(start)
+  return new Date(startDate.getTime() + durasiMenit * 60000)
+}
+
+const checkConflict = (
+  ruang: string,
+  start: Date,
+  end: Date,
+  excludeId?: string
+) => {
+  return jadwalList.value.some((j) => {
+    if (j.ruangOK !== ruang) return false
+    if (excludeId && j.id === excludeId) return false
+    if (j.status === 'batal') return false
+
+    const jStart = new Date(j.start).getTime()
+    const jEnd = new Date(j.end).getTime()
+    const newStart = new Date(start).getTime()
+    const newEnd = new Date(end).getTime()
+
+    return newStart < jEnd && newEnd > jStart
   })
 }
 
-const resetForm = () => {
-  form.ruang = ''
-  form.tanggalMulai = ''
-  form.tanggalSelesai = ''
-  form.pasien = ''
-  form.operator = ''
-  isEditMode.value = false
-  selectedEvent.value = null
+const getSlotRonde = (ruangKode: string, tanggal: string, ronde: number) => {
+  const rondeData = rondeConfig.value.find(r => r.ronde === ronde)
+  if (!rondeData) return null
+
+  const existing = jadwalList.value.filter(
+    j =>
+      j.ruangOK === ruangKode
+      && j.tanggal === tanggal
+      && j.ronde === ronde
+      && j.status !== 'batal'
+  )
+
+  const totalDurasi = existing.reduce(
+    (sum, j) => sum + (j.estimasiDurasi ?? 0),
+    0
+  )
+
+  const toMinutes = (time?: string) => {
+    if (!time) return 0
+    const [h = '0', m = '0'] = time.split(':')
+    return Number(h) * 60 + Number(m)
+  }
+
+  const rondeDurasi
+    = toMinutes(rondeData.waktuSelesai) - toMinutes(rondeData.waktuMulai)
+
+  return {
+    tersedia:
+      existing.length
+      < (ruangOKList.value.find(r => r.kode === ruangKode)?.kapasitasRonde
+        ?? 0),
+    sisaWaktu: rondeDurasi - totalDurasi,
+    jumlahJadwal: existing.length
+  }
+}
+
+const autoSchedule = () => {
+  if (!form.tanggal || !form.estimasiDurasi) return
+
+  // Cari slot kosong otomatis
+  for (const ruang of okTersedia.value) {
+    for (const ronde of rondeConfig.value) {
+      const slot = getSlotRonde(ruang.kode, form.tanggal, ronde.ronde)
+      if (slot && slot.tersedia && slot.sisaWaktu >= form.estimasiDurasi) {
+        form.ruangOK = ruang.kode
+        form.ronde = ronde.ronde
+        form.jamMulai = ronde.waktuMulai
+
+        // Hitung jam selesai berdasarkan jadwal existing di ronde ini
+        const existingInRonde = jadwalList.value.filter(
+          j =>
+            j.ruangOK === ruang.kode
+            && j.tanggal === form.tanggal
+            && j.ronde === ronde.ronde
+            && j.status !== 'batal'
+        )
+
+        if (existingInRonde.length > 0) {
+          const lastEnd = Math.max(
+            ...existingInRonde.map(j => new Date(j.end).getTime())
+          )
+          const startTime = new Date(lastEnd)
+          form.jamMulai = `${String(startTime.getHours()).padStart(2, '0')}:${String(startTime.getMinutes()).padStart(2, '0')}`
+        }
+
+        return
+      }
+    }
+  }
 }
 
 const tambahJadwal = () => {
-  if (!form.ruang || !form.tanggalMulai || !form.tanggalSelesai) {
-    alert('Lengkapi data jadwal!')
+  if (!form.pasien || !form.ruangOK || !form.tanggal || !form.jamMulai) {
+    toast.add({
+      title: 'Error',
+      description: 'Lengkapi data wajib!',
+      color: 'error'
+    })
     return
   }
 
-  if (hasConflict.value) {
-    alert('⚠ Jadwal bentrok dengan ruang lain!')
+  const start = new Date(`${form.tanggal}T${form.jamMulai}`)
+  const end = calculateEndTime(start, form.estimasiDurasi)
+
+  if (checkConflict(form.ruangOK, start, end)) {
+    toast.add({
+      title: 'Konflik!',
+      description: 'Jadwal bertabrakan dengan operasi lain',
+      color: 'error'
+    })
     return
   }
 
-  const start = snapTo30Minutes(new Date(form.tanggalMulai))
-  const end = snapTo30Minutes(new Date(form.tanggalSelesai))
-
-  if (start >= end) {
-    alert('Waktu selesai harus lebih besar dari waktu mulai!')
-    return
-  }
-
-  events.value.push({
-    id: Date.now(),
-    title: `${getRuangLabel(form.ruang)} - ${form.pasien || 'Sesi Operasi'}`,
+  const newJadwal: JadwalOperasi = {
+    id: generateId(),
+    pasien: form.pasien,
+    noRM: form.noRM,
+    operator: form.operator,
+    asisten: form.asisten,
+    tindakan: form.tindakan,
+    ruangOK: form.ruangOK,
+    ronde: form.ronde,
+    estimasiDurasi: form.estimasiDurasi,
+    tanggal: form.tanggal,
     start,
     end,
-    ruang: form.ruang,
-    color: getRuangColor(form.ruang),
-    pasien: form.pasien,
-    operator: form.operator
+    status: 'terjadwal',
+    color: getRuangColor(form.ruangOK),
+    sikompasId: form.sikompasId || `SK-${Date.now()}`
+  }
+
+  jadwalList.value.push(newJadwal)
+  toast.add({
+    title: 'Sukses',
+    description: 'Jadwal operasi berhasil ditambahkan',
+    color: 'success'
   })
-
   resetForm()
-}
-
-const editEvent = (event: IBPEvent) => {
-  selectedEvent.value = event
-  form.ruang = event.ruang
-  form.tanggalMulai = new Date(event.start).toISOString().slice(0, 16)
-  form.tanggalSelesai = new Date(event.end).toISOString().slice(0, 16)
-  form.pasien = event.pasien || ''
-  form.operator = event.operator || ''
-  isEditMode.value = true
-
-  // Scroll to form
-  window.scrollTo({ top: 0, behavior: 'smooth' })
+  calendarKey.value++
 }
 
 const updateJadwal = () => {
   if (!selectedEvent.value) return
 
-  if (hasConflict.value) {
-    alert('⚠ Jadwal bentrok!')
+  const start = new Date(`${form.tanggal}T${form.jamMulai}`)
+  const end = calculateEndTime(start, form.estimasiDurasi)
+
+  if (checkConflict(form.ruangOK, start, end, selectedEvent.value.id)) {
+    toast.add({
+      title: 'Konflik!',
+      description: 'Jadwal bertabrakan',
+      color: 'error'
+    })
     return
   }
 
-  const start = snapTo30Minutes(new Date(form.tanggalMulai))
-  const end = snapTo30Minutes(new Date(form.tanggalSelesai))
-
-  const index = events.value.findIndex(e => e.id === selectedEvent.value!.id)
+  const index = jadwalList.value.findIndex(
+    j => j.id === selectedEvent.value!.id
+  )
   if (index !== -1) {
-    events.value[index] = {
+    jadwalList.value[index] = {
       ...selectedEvent.value,
-      title: `${getRuangLabel(form.ruang)} - ${form.pasien || 'Sesi Operasi'}`,
+      ...form,
+      tanggal: form.tanggal,
       start,
       end,
-      ruang: form.ruang,
-      color: getRuangColor(form.ruang),
-      pasien: form.pasien,
-      operator: form.operator
+      color: getRuangColor(form.ruangOK)
     }
-  }
-
-  resetForm()
-}
-
-const hapusEvent = (id: number) => {
-  if (confirm('Yakin ingin menghapus jadwal ini?')) {
-    events.value = events.value.filter(e => e.id !== id)
-    if (selectedEvent.value?.id === id) {
-      resetForm()
-    }
+    toast.add({
+      title: 'Sukses',
+      description: 'Jadwal berhasil diupdate',
+      color: 'success'
+    })
+    resetForm()
+    calendarKey.value++
   }
 }
 
-/* =========================
-   CALENDAR HANDLERS
-========================= */
+const hapusJadwal = (id: string) => {
+  const jadwal = jadwalList.value.find(j => j.id === id)
 
-const handleEventDrop = (info: EventDropArg) => {
-  const event = events.value.find(e => e.id === Number(info.event.id))
-  if (event && info.event.start && info.event.end) {
-    event.start = info.event.start
-    event.end = info.event.end
+  if (!jadwal) return
+
+  jadwal.status = 'batal'
+
+  toast.add({
+    title: 'Info',
+    description: 'Jadwal dibatalkan',
+    color: 'warning'
+  })
+
+  if (selectedEvent.value?.id === id) resetForm()
+}
+
+const _mulaiOperasi = (id: string) => {
+  const jadwal = jadwalList.value.find(j => j.id === id)
+  if (jadwal) {
+    jadwal.status = 'proses'
+    jadwal.start = new Date() // Real-time start
+    toast.add({
+      title: 'Operasi Dimulai',
+      description: `${jadwal.pasien} - ${jadwal.tindakan}`,
+      color: 'primary'
+    })
   }
 }
 
-const handleEventResize = (info: EventResizeDoneArg) => {
-  const event = events.value.find(e => e.id === Number(info.event.id))
-  if (event && info.event.start && info.event.end) {
-    event.start = info.event.start
-    event.end = info.event.end
-  }
+// const selesaiOperasi = (id: string) => {
+//   const jadwal = jadwalList.value.find(j => j.id === id)
+//   if (jadwal) {
+//     jadwal.status = 'selesai'
+//     jadwal.end = new Date() // Actual end time
+//     const actualDurasi = Math.round(
+//       (new Date(jadwal.end).getTime() - new Date(jadwal.start).getTime())
+//       / 60000
+//     )
+//     toast.add({
+//       title: 'Operasi Selesai',
+//       description: `Durasi: ${actualDurasi} menit (Estimasi: ${jadwal.estimasiDurasi})`,
+//       color: 'success'
+//     })
+//   }
+// }
+
+const editJadwal = (jadwal: JadwalOperasi) => {
+  selectedEvent.value = jadwal
+  const startDate = new Date(jadwal.start)
+  Object.assign(form, {
+    pasien: jadwal.pasien,
+    noRM: jadwal.noRM,
+    operator: jadwal.operator,
+    asisten: jadwal.asisten,
+    tindakan: jadwal.tindakan,
+    ruangOK: jadwal.ruangOK,
+    ronde: jadwal.ronde,
+    estimasiDurasi: jadwal.estimasiDurasi,
+    tanggal: jadwal.tanggal,
+    jamMulai: `${String(startDate.getHours()).padStart(2, '0')}:${String(startDate.getMinutes()).padStart(2, '0')}`,
+    sikompasId: jadwal.sikompasId
+  })
+  isEditMode.value = true
+  activeTab.value = 'form'
 }
 
-const handleEventClick = (info: any) => {
-  const event = events.value.find(e => e.id === Number(info.event.id))
-  if (event) {
-    editEvent(event)
-  }
+const resetForm = () => {
+  Object.assign(form, {
+    pasien: '',
+    noRM: '',
+    operator: '',
+    asisten: '',
+    tindakan: '',
+    ruangOK: '',
+    ronde: 1,
+    estimasiDurasi: 120,
+    tanggal: selectedDate.value,
+    jamMulai: '',
+    sikompasId: ''
+  })
+  isEditMode.value = false
+  selectedEvent.value = null
 }
 
-/* =========================
-   LIFECYCLE
-========================= */
+// ==================== CALENDAR HANDLERS ====================
 
-// Set default datetime-local ke waktu sekarang
+// const handleEventDrop = (info: EventDropArg) => {
+//   const jadwal = jadwalList.value.find(j => j.id === info.event.id)
+//   if (!jadwal || !info.event.start || !info.event.end) return
+
+//   if (
+//     checkConflict(jadwal.ruangOK, info.event.start, info.event.end, jadwal.id)
+//   ) {
+//     info.revert()
+//     toast.add({
+//       title: 'Gagal',
+//       description: 'Slot waktu tidak tersedia',
+//       color: 'error'
+//     })
+//     return
+//   }
+
+//   jadwal.start = info.event.start
+//   jadwal.end = info.event.end
+//   jadwal.tanggal = info.event.start.toISOString().slice(0, 10)
+//   toast.add({
+//     title: 'Jadwal Dipindahkan',
+//     description: 'Waktu operasi diupdate',
+//     color: 'primary'
+//   })
+// }
+
+// const handleEventClick = (info: EventClickArg) => {
+//   const jadwal = jadwalList.value.find(j => j.id === info.event.id)
+//   if (jadwal) editJadwal(jadwal)
+// }
+
+// ==================== UTILS ====================
+
+const formatWaktu = (date: Date | string) => {
+  const d = new Date(date)
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+}
+
+const _formatTanggal = (date: Date | string) => {
+  const d = new Date(date)
+  return d.toLocaleDateString('id-ID', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })
+}
+
+const getStatusColor = (
+  status: string
+): 'neutral' | 'primary' | 'success' | 'error' => {
+  const colors: Record<string, 'neutral' | 'primary' | 'success' | 'error'> = {
+    terjadwal: 'neutral',
+    proses: 'primary',
+    selesai: 'success',
+    batal: 'error'
+  }
+  return colors[status] || 'neutral'
+}
+
+// ==================== LIFECYCLE ====================
+
 onMounted(() => {
-  const now = new Date()
-  now.setMinutes(now.getMinutes() - (now.getMinutes() % 30))
-  const defaultStart = now.toISOString().slice(0, 16)
-
-  now.setHours(now.getHours() + 2)
-  const defaultEnd = now.toISOString().slice(0, 16)
-
-  form.tanggalMulai = defaultStart
-  form.tanggalSelesai = defaultEnd
+  form.tanggal = selectedDate.value ?? ''
 })
+
+onUnmounted(() => {
+  jadwalList.value = []
+})
+
+const toast = useToast()
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 p-6">
-    <div class="max-w-7xl mx-auto space-y-6">
-      <!-- HEADER -->
-      <div class="flex items-center justify-between">
-        <div>
-          <h1 class="text-2xl font-bold text-gray-900">
-            Manajemen Jadwal IBP
-          </h1>
-          <p class="text-sm text-gray-500 mt-1">
-            Kelola jadwal operasi dan ketersediaan ruang OK
-          </p>
-        </div>
-        <div class="flex gap-2">
-          <UBadge
-            v-for="ruang in ruangOptions"
-            :key="ruang.value"
-            :style="{ backgroundColor: ruang.color }"
-            class="text-white"
-          >
-            {{ ruang.label }}
-          </UBadge>
-        </div>
-      </div>
-
-      <!-- FORM CARD -->
-      <UCard class="rounded-2xl shadow-sm border-0">
-        <div class="flex items-center gap-2 mb-4">
+  <div class="min-h-screen bg-gray-50 p-6 space-y-6">
+    <!-- Statistik Dashboard -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <UCard
+        class="bg-linear-to-br from-blue-500 to-blue-600 text-white border-0"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-blue-100 text-sm">
+              Total Jadwal Hari Ini
+            </p>
+            <p class="text-3xl font-bold">
+              {{ statistikHariIni.total }}
+            </p>
+          </div>
           <UIcon
-            :name="
-              isEditMode
-                ? 'i-heroicons-pencil-square'
-                : 'i-heroicons-plus-circle'
-            "
-            class="w-5 h-5 text-primary-500"
+            name="i-heroicons-calendar"
+            class="w-8 h-8 text-blue-200"
           />
-          <h2 class="text-lg font-semibold">
-            {{ isEditMode ? "Edit Jadwal" : "Tambah Jadwal Baru" }}
-          </h2>
-        </div>
-
-        <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-4">
-          <USelectMenu
-            v-model="form.ruang"
-            :items="ruangOptions"
-            value-key="value"
-            option-attribute="label"
-            placeholder="Pilih Ruang OK"
-            class="w-full"
-          />
-
-          <UInput
-            v-model="form.pasien"
-            placeholder="Nama Pasien"
-            icon="i-heroicons-user"
-          />
-
-          <UInput
-            v-model="form.operator"
-            placeholder="Nama Operator"
-            icon="i-heroicons-user-circle"
-          />
-
-          <UInput
-            v-model="form.tanggalMulai"
-            type="datetime-local"
-            label="Mulai"
-          />
-
-          <UInput
-            v-model="form.tanggalSelesai"
-            type="datetime-local"
-            label="Selesai"
-          />
-        </div>
-
-        <div class="mt-4 flex items-center justify-between">
-          <div
-            v-if="hasConflict"
-            class="flex items-center gap-2 text-red-600 bg-red-50 px-4 py-2 rounded-lg"
-          >
-            <UIcon
-              name="i-heroicons-exclamation-triangle"
-              class="w-5 h-5"
-            />
-            <span class="font-medium text-sm">Terjadi Konflik Jadwal</span>
-          </div>
-          <div
-            v-else
-            class="text-sm text-gray-500"
-          >
-            * Jadwal akan di-snap ke 30 menit terdekat
-          </div>
-
-          <div class="flex gap-2">
-            <UButton
-              v-if="isEditMode"
-              variant="soft"
-              color="neutral"
-              @click="resetForm"
-            >
-              Batal
-            </UButton>
-            <UButton
-              v-if="isEditMode"
-              color="primary"
-              @click="updateJadwal"
-            >
-              Update Jadwal
-            </UButton>
-            <UButton
-              v-else
-              color="primary"
-              icon="i-heroicons-plus"
-              @click="tambahJadwal"
-            >
-              Tambah Jadwal
-            </UButton>
-          </div>
         </div>
       </UCard>
 
-      <!-- MAIN CONTENT GRID -->
-      <div class="grid lg:grid-cols-3 gap-6">
-        <!-- CALENDAR -->
-        <UCard class="rounded-2xl shadow-sm border-0 lg:col-span-2">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-semibold flex items-center gap-2">
-              <UIcon
-                name="i-heroicons-calendar-days"
-                class="w-5 h-5 text-primary-500"
-              />
-              Timeline Operasi
-            </h2>
-            <div class="flex gap-2">
-              <UButton
-                size="sm"
-                variant="soft"
-                color="neutral"
-                @click="events = []"
-              >
-                Reset All
-              </UButton>
-            </div>
+      <UCard
+        class="bg-linear-to-br from-amber-500 to-amber-600 text-white border-0"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-amber-100 text-sm">
+              Menunggu
+            </p>
+            <p class="text-3xl font-bold">
+              {{ statistikHariIni.menunggu }}
+            </p>
           </div>
+          <UIcon
+            name="i-heroicons-clock"
+            class="w-8 h-8 text-amber-200"
+          />
+        </div>
+      </UCard>
 
-          <div class="fc-theme-standard">
-            <FullCalendar
-              :plugins="[dayGridPlugin, timeGridPlugin, interactionPlugin]"
-              initial-view="timeGridWeek"
-              :events="events"
-              :editable="true"
-              :selectable="true"
-              :event-resizable-from-start="true"
-              :header-toolbar="{
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-              }"
-              :slot-duration="'00:30:00'"
-              :slot-min-time="'06:00:00'"
-              :slot-max-time="'22:00:00'"
-              :all-day-slot="false"
-              :height="'auto'"
-              @event-drop="handleEventDrop"
-              @event-resize="handleEventResize"
-              @event-click="handleEventClick"
-            />
+      <UCard
+        class="bg-linear-to-br from-green-500 to-green-600 text-white border-0"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-green-100 text-sm">
+              Selesai
+            </p>
+            <p class="text-3xl font-bold">
+              {{ statistikHariIni.selesai }}
+            </p>
           </div>
-        </UCard>
+          <UIcon
+            name="i-heroicons-check-circle"
+            class="w-8 h-8 text-green-200"
+          />
+        </div>
+      </UCard>
 
-        <!-- SIDEBAR: LIST & STATS -->
-        <div class="space-y-6">
-          <!-- STATS -->
-          <UCard class="rounded-2xl shadow-sm border-0">
-            <h3
-              class="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wider"
-            >
-              Ringkasan
-            </h3>
-            <div class="grid grid-cols-2 gap-4">
-              <div class="bg-primary-50 rounded-xl p-4 text-center">
-                <div class="text-2xl font-bold text-primary-600">
-                  {{ events.length }}
-                </div>
-                <div class="text-xs text-primary-700 mt-1">
-                  Total Jadwal
-                </div>
+      <UCard
+        class="bg-linear-to-br from-purple-500 to-purple-600 text-white border-0"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-purple-100 text-sm">
+              OK Tersedia
+            </p>
+            <p class="text-3xl font-bold">
+              {{ okTersedia.length }}/{{ ruangOKList.length }}
+            </p>
+          </div>
+          <UIcon
+            name="i-heroicons-home"
+            class="w-8 h-8 text-purple-200"
+          />
+        </div>
+      </UCard>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <UTabs
+      v-model="activeTab"
+      :items="[
+        {
+          label: 'Kalender Operasi',
+          icon: 'i-heroicons-calendar-days',
+          slot: 'kalender'
+        },
+        {
+          label: 'Plotting Ruangan',
+          icon: 'i-heroicons-map',
+          slot: 'plotting'
+        },
+        {
+          label: 'Input Jadwal',
+          icon: 'i-heroicons-plus-circle',
+          slot: 'form'
+        },
+        { label: 'SiKompas', icon: 'i-heroicons-clock', slot: 'sikompas' }
+      ]"
+      class="mb-6"
+    >
+      <!-- TAB: KALENDER -->
+      <template #kalender>
+        <div class="grid lg:grid-cols-3 gap-6">
+          <UCard class="lg:col-span-2 shadow-sm">
+            <template #header>
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold">
+                  Timeline Operasi
+                </h3>
+                <UInput
+                  v-model="selectedDate"
+                  type="date"
+                  class="w-40"
+                  @change="calendarKey++"
+                />
               </div>
-              <div class="bg-emerald-50 rounded-xl p-4 text-center">
-                <div class="text-2xl font-bold text-emerald-600">
-                  {{ ruangOptions.length }}
-                </div>
-                <div class="text-xs text-emerald-700 mt-1">
-                  Ruang OK
-                </div>
-              </div>
-            </div>
+            </template>
+
+            <!-- <ClientOnly>
+                <FullCalendar
+                  :key="calendarKey"
+                  :plugins="[dayGridPlugin, timeGridPlugin, interactionPlugin]"
+                  :initial-date="selectedDate"
+                  initial-view="timeGridDay"
+                  :events="events"
+                  :editable="true"
+                  :selectable="true"
+                  :header-toolbar="{
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'timeGridDay,timeGridWeek,dayGridMonth'
+                  }"
+                  :slot-min-time="'06:00:00'"
+                  :slot-max-time="'22:00:00'"
+                  :slot-duration="'00:30:00'"
+                  :all-day-slot="false"
+                  :height="'650px'"
+                  locale="id"
+                  @event-drop="handleEventDrop"
+                  @event-click="handleEventClick"
+                />
+                <template #fallback>
+                  <div class="h-162.5 flex items-center justify-center">
+                    <UIcon
+                      name="i-heroicons-arrow-path"
+                      class="w-8 h-8 animate-spin text-gray-400"
+                    />
+                  </div>
+                </template>
+              </ClientOnly> -->
           </UCard>
 
-          <!-- UPCOMING LIST -->
-          <UCard class="rounded-2xl shadow-sm border-0">
-            <h3
-              class="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wider flex items-center gap-2"
-            >
-              <UIcon
-                name="i-heroicons-list-bullet"
-                class="w-4 h-4"
-              />
-              Daftar Jadwal
-            </h3>
+          <!-- Daftar Jadwal Hari Ini -->
+          <div class="space-y-4">
+            <UCard class="shadow-sm">
+              <template #header>
+                <h3
+                  class="text-sm font-semibold uppercase tracking-wider text-gray-500"
+                >
+                  Jadwal Hari Ini
+                </h3>
+              </template>
 
-            <div
-              v-if="events.length === 0"
-              class="text-center py-8 text-gray-400"
-            >
-              <UIcon
-                name="i-heroicons-inbox"
-                class="w-12 h-12 mx-auto mb-2 opacity-50"
-              />
-              <p class="text-sm">
-                Belum ada jadwal
-              </p>
-            </div>
-
-            <div
-              v-else
-              class="space-y-3 max-h-96 overflow-y-auto pr-2"
-            >
-              <div
-                v-for="event in [...events].sort(
-                  (a, b) =>
-                    new Date(a.start).getTime() - new Date(b.start).getTime()
-                )"
-                :key="event.id"
-                class="group relative p-4 rounded-xl border border-gray-200 hover:border-primary-300 hover:shadow-md transition-all cursor-pointer"
-                :class="{
-                  'ring-2 ring-primary-500': selectedEvent?.id === event.id
-                }"
-                :style="{
-                  borderLeftWidth: '4px',
-                  borderLeftColor: event.color
-                }"
-                @click="editEvent(event)"
-              >
-                <div class="flex justify-between items-start">
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-center gap-2 mb-1">
-                      <UBadge
-                        :style="{ backgroundColor: event.color }"
-                        class="text-white text-xs"
-                      >
-                        {{ getRuangLabel(event.ruang) }}
-                      </UBadge>
-                      <span
-                        v-if="event.pasien"
-                        class="font-medium text-gray-900 truncate"
-                      >
-                        {{ event.pasien }}
-                      </span>
-                    </div>
-                    <div class="text-xs text-gray-500 space-y-1">
-                      <div class="flex items-center gap-1">
-                        <UIcon
-                          name="i-heroicons-clock"
-                          class="w-3 h-3"
-                        />
-                        {{ formatDateTime(event.start) }}
+              <div class="space-y-3 max-h-150 overflow-y-auto">
+                <div
+                  v-for="(jadwalGroup, ruangKode) in jadwalByRuang"
+                  :key="ruangKode"
+                  class="border-l-4 rounded-r-lg p-3 bg-gray-50"
+                  :style="{
+                    borderLeftColor: getRuangColor(ruangKode)
+                  }"
+                >
+                  <h4 class="font-semibold text-sm mb-2">
+                    {{ getRuangName(ruangKode) }}
+                  </h4>
+                  <div class="space-y-2">
+                    <div
+                      v-for="j in jadwalGroup"
+                      :key="j.id"
+                      class="bg-white p-2 rounded border text-xs cursor-pointer hover:shadow-md transition-shadow"
+                      @click="editJadwal(j)"
+                    >
+                      <div class="flex justify-between items-start">
+                        <span class="font-medium">{{
+                          formatWaktu(j.start)
+                        }}</span>
+                        <UBadge
+                          :color="getStatusColor(j.status)"
+                          size="xs"
+                        >
+                          {{ j.status }}
+                        </UBadge>
                       </div>
-                      <div
-                        v-if="event.operator"
-                        class="flex items-center gap-1"
-                      >
-                        <UIcon
-                          name="i-heroicons-user"
-                          class="w-3 h-3"
-                        />
-                        {{ event.operator }}
-                      </div>
+                      <p class="font-semibold mt-1 truncate">
+                        {{ j.pasien }}
+                      </p>
+                      <p class="text-gray-500 truncate">
+                        {{ j.tindakan }}
+                      </p>
                     </div>
                   </div>
-                  <UButton
-                    size="xs"
-                    color="error"
-                    variant="ghost"
-                    icon="i-heroicons-trash"
-                    class="opacity-0 group-hover:opacity-100 transition-opacity"
-                    @click.stop="hapusEvent(event.id)"
-                  />
+                </div>
+              </div>
+            </UCard>
+          </div>
+        </div>
+      </template>
+
+      <!-- TAB: PLOTTING RUANGAN -->
+      <template #plotting>
+        <div class="space-y-6">
+          <!-- Konfigurasi Ronde -->
+          <UCard>
+            <template #header>
+              <h3 class="text-lg font-semibold">
+                Konfigurasi Ronde Operasi
+              </h3>
+            </template>
+
+            <div class="grid md:grid-cols-3 gap-4">
+              <div
+                v-for="ronde in rondeConfig"
+                :key="ronde.ronde"
+                class="border rounded-xl p-4 bg-linear-to-br from-gray-50 to-white"
+              >
+                <div class="flex items-center gap-3 mb-3">
+                  <div
+                    class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-bold"
+                  >
+                    {{ ronde.ronde }}
+                  </div>
+                  <div>
+                    <h4 class="font-semibold">
+                      Ronde {{ ronde.ronde }}
+                    </h4>
+                    <p class="text-sm text-gray-500">
+                      {{ ronde.waktuMulai }} - {{ ronde.waktuSelesai }}
+                    </p>
+                  </div>
+                </div>
+                <div class="text-sm text-gray-600">
+                  <p>Durasi Default: {{ ronde.durasiDefault }} menit</p>
                 </div>
               </div>
             </div>
           </UCard>
 
-          <!-- RUANG AVAILABILITY -->
-          <UCard class="rounded-2xl shadow-sm border-0">
-            <h3
-              class="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wider"
-            >
-              Ketersediaan Ruang
-            </h3>
-            <div class="space-y-3">
-              <div
-                v-for="ruang in ruangOptions"
-                :key="ruang.value"
-                class="flex items-center justify-between p-3 rounded-lg bg-gray-50"
-              >
-                <div class="flex items-center gap-3">
-                  <div
-                    class="w-3 h-3 rounded-full"
-                    :style="{ backgroundColor: ruang.color }"
-                  />
-                  <span class="text-sm font-medium">{{ ruang.label }}</span>
-                </div>
-                <UBadge
-                  variant="soft"
-                  :color="
-                    eventsByRuang[ruang.value]?.length > 0 ? 'primary' : 'neutral'
-                  "
-                >
-                  {{ eventsByRuang[ruang.value]?.length || 0 }} jadwal
-                </UBadge>
+          <!-- Matrix Plotting -->
+          <UCard>
+            <template #header>
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold">
+                  Matrix Plotting Ruangan
+                </h3>
+                <UInput
+                  v-model="selectedDate"
+                  type="date"
+                />
               </div>
+            </template>
+
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead>
+                  <tr class="border-b">
+                    <th class="text-left p-4 font-semibold text-gray-700">
+                      Ruang OK
+                    </th>
+                    <th
+                      v-for="ronde in rondeConfig"
+                      :key="ronde.ronde"
+                      class="text-center p-4 font-semibold text-gray-700 w-1/4"
+                    >
+                      Ronde {{ ronde.ronde }}
+                      <div class="text-xs font-normal text-gray-500">
+                        {{ ronde.waktuMulai }} - {{ ronde.waktuSelesai }}
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="ruang in ruangOKList"
+                    :key="ruang.id"
+                    class="border-b hover:bg-gray-50"
+                  >
+                    <td class="p-4">
+                      <div class="flex items-center gap-3">
+                        <div
+                          class="w-4 h-4 rounded-full"
+                          :style="{ backgroundColor: ruang.color }"
+                        />
+                        <div>
+                          <p class="font-semibold">
+                            {{ ruang.nama }}
+                          </p>
+                          <p class="text-xs text-gray-500">
+                            Kapasitas: {{ ruang.kapasitasRonde }}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td
+                      v-for="ronde in rondeConfig"
+                      :key="ronde.ronde"
+                      class="p-4 align-top"
+                    >
+                      <div class="space-y-2">
+                        <div
+                          v-for="j in jadwalList.filter(
+                            (j) =>
+                              j.ruangOK === ruang.kode
+                              && j.ronde === ronde.ronde
+                              && j.tanggal === selectedDate
+                              && j.status !== 'batal'
+                          )"
+                          :key="j.id"
+                          class="bg-white border-l-4 p-2 rounded shadow-sm text-xs cursor-pointer hover:shadow-md transition-all"
+                          :style="{ borderLeftColor: ruang.color }"
+                          @click="editJadwal(j)"
+                        >
+                          <div class="flex justify-between items-center mb-1">
+                            <span class="font-semibold">{{
+                              formatWaktu(j.start)
+                            }}</span>
+                            <UBadge
+                              :color="getStatusColor(j.status)"
+                              size="xs"
+                              variant="soft"
+                            >
+                              {{ j.status }}
+                            </UBadge>
+                          </div>
+                          <p class="truncate font-medium">
+                            {{ j.pasien }}
+                          </p>
+                          <p class="truncate text-gray-500">
+                            {{ j.tindakan }}
+                          </p>
+                          <div
+                            class="mt-1 flex items-center gap-1 text-gray-400"
+                          >
+                            <UIcon
+                              name="i-heroicons-clock"
+                              class="w-3 h-3"
+                            />
+                            <span>{{ j.estimasiDurasi }}m</span>
+                          </div>
+                        </div>
+
+                        <!-- Slot Kosong Indicator -->
+                        <div
+                          v-if="
+                            getSlotRonde(ruang.kode, selectedDate, ronde.ronde)
+                              ?.jumlahJadwal === 0
+                          "
+                          class="border-2 border-dashed border-gray-200 rounded p-4 text-center text-gray-400 text-xs"
+                        >
+                          <UIcon
+                            name="i-heroicons-plus"
+                            class="w-5 h-5 mx-auto mb-1"
+                          />
+                          Slot Tersedia
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </UCard>
         </div>
-      </div>
-    </div>
+      </template>
+
+      <!-- TAB: FORM INPUT -->
+      <template #form>
+        <div class="max-w-4xl mx-auto">
+          <UCard class="shadow-lg">
+            <template #header>
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-10 h-10 rounded-full flex items-center justify-center"
+                  :class="
+                    isEditMode
+                      ? 'bg-amber-100 text-amber-600'
+                      : 'bg-primary-100 text-primary-600'
+                  "
+                >
+                  <UIcon
+                    :name="
+                      isEditMode
+                        ? 'i-heroicons-pencil-square'
+                        : 'i-heroicons-plus'
+                    "
+                    class="w-5 h-5"
+                  />
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold">
+                    {{
+                      isEditMode ? "Edit Jadwal Operasi" : "Tambah Jadwal Baru"
+                    }}
+                  </h3>
+                  <p class="text-sm text-gray-500">
+                    {{
+                      isEditMode
+                        ? "Modifikasi data operasi yang sudah terjadwal"
+                        : "Input jadwal operasi baru dengan plotting otomatis"
+                    }}
+                  </p>
+                </div>
+              </div>
+            </template>
+
+            <div class="space-y-6">
+              <!-- Row 1: Info Pasien -->
+              <div class="grid md:grid-cols-2 gap-4">
+                <UFormGroup
+                  label="Nama Pasien"
+                  required
+                >
+                  <UInput
+                    v-model="form.pasien"
+                    placeholder="Nama lengkap pasien"
+                    icon="i-heroicons-user"
+                  />
+                </UFormGroup>
+
+                <UFormGroup label="Nomor RM">
+                  <UInput
+                    v-model="form.noRM"
+                    placeholder="Nomor Rekam Medis"
+                    icon="i-heroicons-identification"
+                  />
+                </UFormGroup>
+              </div>
+
+              <!-- Row 2: Tim Operasi -->
+              <div class="grid md:grid-cols-2 gap-4">
+                <UFormGroup
+                  label="Operator (Dokter)"
+                  required
+                >
+                  <USelectMenu
+                    v-model="form.operator"
+                    :options="[
+                      'Dr. Ahmad',
+                      'Dr. Budi',
+                      'Dr. Citra',
+                      'Dr. Diana',
+                      'Dr. Eko'
+                    ]"
+                    placeholder="Pilih dokter operator"
+                    icon="i-heroicons-user-circle"
+                  />
+                </UFormGroup>
+
+                <UFormGroup label="Asisten">
+                  <UInput
+                    v-model="form.asisten"
+                    placeholder="Nama asisten/PPA"
+                    icon="i-heroicons-users"
+                  />
+                </UFormGroup>
+              </div>
+
+              <!-- Row 3: Tindakan & SiKompas -->
+              <div class="grid md:grid-cols-2 gap-4">
+                <UFormGroup
+                  label="Tindakan Operasi"
+                  required
+                >
+                  <USelectMenu
+                    v-model="form.tindakan"
+                    :options="[
+                      'Appendektomi',
+                      'Herniorafi',
+                      'Laparoskopi',
+                      'Mastektomi',
+                      'Thyroidectomy',
+                      'Lainnya'
+                    ]"
+                    placeholder="Pilih tindakan"
+                    icon="i-heroicons-clipboard-document-list"
+                  />
+                </UFormGroup>
+
+                <UFormGroup label="ID SiKompas">
+                  <UInput
+                    v-model="form.sikompasId"
+                    placeholder="Auto-generate jika kosong"
+                    icon="i-heroicons-link"
+                  >
+                    <template #trailing>
+                      <UBadge
+                        color="primary"
+                        variant="soft"
+                        size="xs"
+                      >
+                        SiKompas
+                      </UBadge>
+                    </template>
+                  </UInput>
+                </UFormGroup>
+              </div>
+
+              <!-- Row 4: Plotting Ruang & Waktu -->
+              <div class="bg-gray-50 p-4 rounded-xl space-y-4">
+                <h4 class="font-semibold text-gray-700 flex items-center gap-2">
+                  <UIcon
+                    name="i-heroicons-map-pin"
+                    class="w-5 h-5 text-primary-500"
+                  />
+                  Plotting Ruang & Ronde
+                </h4>
+
+                <div class="grid md:grid-cols-4 gap-4">
+                  <UFormGroup
+                    label="Tanggal"
+                    required
+                  >
+                    <UInput
+                      v-model="form.tanggal"
+                      type="date"
+                      @change="autoSchedule"
+                    />
+                  </UFormGroup>
+
+                  <UFormGroup
+                    label="Ruang OK"
+                    required
+                  >
+                    <USelectMenu
+                      v-model="form.ruangOK"
+                      :options="
+                        ruangOKList
+                          .filter((r) => r.isActive)
+                          .map((r) => ({ label: r.nama, value: r.kode }))
+                      "
+                      placeholder="Pilih ruang"
+                      @change="autoSchedule"
+                    />
+                  </UFormGroup>
+
+                  <UFormGroup label="Ronde">
+                    <USelectMenu
+                      v-model="form.ronde"
+                      :options="
+                        rondeConfig.map((r) => ({
+                          label: `Ronde ${r.ronde}`,
+                          value: r.ronde
+                        }))
+                      "
+                      @change="autoSchedule"
+                    />
+                  </UFormGroup>
+
+                  <UFormGroup label="Estimasi Durasi (menit)">
+                    <UInput
+                      v-model.number="form.estimasiDurasi"
+                      type="number"
+                      min="30"
+                      step="30"
+                      @change="autoSchedule"
+                    >
+                      <template #trailing>
+                        <span class="text-gray-400 text-sm">menit</span>
+                      </template>
+                    </UInput>
+                  </UFormGroup>
+                </div>
+
+                <!-- Auto Schedule Info -->
+                <div
+                  v-if="form.ruangOK && form.ronde"
+                  class="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-center gap-3"
+                >
+                  <UIcon
+                    name="i-heroicons-light-bulb"
+                    class="w-5 h-5 text-blue-500"
+                  />
+                  <div class="text-sm text-blue-700">
+                    <span class="font-semibold">Rekomendasi:</span>
+                    Ronde {{ form.ronde }} di
+                    {{ getRuangName(form.ruangOK) }} slot
+                    {{
+                      getSlotRonde(form.ruangOK, form.tanggal, form.ronde)
+                        ?.jumlahJadwal || 0
+                    }}/{{
+                      ruangOKList.find((r) => r.kode === form.ruangOK)
+                        ?.kapasitasRonde
+                    }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Row 5: Waktu Spesifik -->
+              <div class="grid md:grid-cols-2 gap-4">
+                <UFormGroup
+                  label="Jam Mulai"
+                  required
+                >
+                  <UInput
+                    v-model="form.jamMulai"
+                    type="time"
+                  />
+                </UFormGroup>
+
+                <UFormGroup label="Prediksi Selesai">
+                  <UInput
+                    :model-value="
+                      form.jamMulai && form.estimasiDurasi
+                        ? formatWaktu(
+                          calculateEndTime(
+                            new Date(`${form.tanggal}T${form.jamMulai}`),
+                            form.estimasiDurasi
+                          )
+                        )
+                        : '--:--'
+                    "
+                    disabled
+                    icon="i-heroicons-calculator"
+                  />
+                </UFormGroup>
+              </div>
+            </div>
+
+            <template #footer>
+              <div class="flex justify-between items-center">
+                <UButton
+                  v-if="isEditMode && selectedEvent"
+                  color="error"
+                  variant="soft"
+                  icon="i-heroicons-trash"
+                  @click="hapusJadwal(selectedEvent.id)"
+                >
+                  Batalkan Jadwal
+                </UButton>
+                <div v-else />
+
+                <div class="flex gap-3">
+                  <UButton
+                    variant="soft"
+                    color="neutral"
+                    @click="resetForm"
+                  >
+                    Reset
+                  </UButton>
+                  <UButton
+                    v-if="isEditMode"
+                    color="primary"
+                    icon="i-heroicons-check"
+                    @click="updateJadwal"
+                  >
+                    Update Jadwal
+                  </UButton>
+                  <UButton
+                    v-else
+                    color="primary"
+                    icon="i-heroicons-plus"
+                    @click="tambahJadwal"
+                  >
+                    Simpan Jadwal
+                  </UButton>
+                </div>
+              </div>
+            </template>
+          </UCard>
+        </div>
+      </template>
+
+      <!-- TAB: SIKOMPAS -->
+      <template #sikompas>
+        <div class="space-y-6">
+          <UCard>
+            <template #header>
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="text-lg font-semibold">
+                    Integrasi SiKompas
+                  </h3>
+                  <p class="text-sm text-gray-500">
+                    Sistem Komputerisasi Pelaporan dan Administrasi Operasi
+                    Sentral
+                  </p>
+                </div>
+                <UBadge
+                  color="primary"
+                  size="lg"
+                >
+                  Terhubung
+                </UBadge>
+              </div>
+            </template>
+
+            <div class="grid md:grid-cols-3 gap-6">
+              <UCard
+                class="bg-linear-to-br from-blue-50 to-indigo-50 border-blue-200"
+              >
+                <div class="text-center">
+                  <UIcon
+                    name="i-heroicons-clock"
+                    class="w-12 h-12 text-blue-500 mx-auto mb-3"
+                  />
+                  <h4 class="font-semibold text-gray-900">
+                    Real-time Tracking
+                  </h4>
+                  <p class="text-sm text-gray-600 mt-2">
+                    Monitoring durasi operasi aktual vs estimasi
+                  </p>
+                  <div class="mt-4 text-2xl font-bold text-blue-600">
+                    {{ jadwalList.filter((j) => j.status === "proses").length }}
+                    <span class="text-sm font-normal text-gray-500">operasi berlangsung</span>
+                  </div>
+                </div>
+              </UCard>
+
+              <UCard
+                class="bg-linear-to-br from-green-50 to-emerald-50 border-green-200"
+              >
+                <div class="text-center">
+                  <UIcon
+                    name="i-heroicons-chart-bar"
+                    class="w-12 h-12 text-green-500 mx-auto mb-3"
+                  />
+                  <h4 class="font-semibold text-gray-900">
+                    Efisiensi Waktu
+                  </h4>
+                  <p class="text-sm text-gray-600 mt-2">
+                    Analisis utilization ruang OK
+                  </p>
+                  <div class="mt-4 text-2xl font-bold text-green-600">
+                    87%
+                    <span class="text-sm font-normal text-gray-500">rata-rata</span>
+                  </div>
+                </div>
+              </UCard>
+
+              <UCard
+                class="bg-linear-to-br from-purple-50 to-pink-50 border-purple-200"
+              >
+                <div class="text-center">
+                  <UIcon
+                    name="i-heroicons-document-text"
+                    class="w-12 h-12 text-purple-500 mx-auto mb-3"
+                  />
+                  <h4 class="font-semibold text-gray-900">
+                    Laporan Otomatis
+                  </h4>
+                  <p class="text-sm text-gray-600 mt-2">
+                    Generate Laporan Operasi Harian
+                  </p>
+                  <UButton
+                    size="sm"
+                    color="info"
+                    variant="soft"
+                    class="mt-4"
+                    block
+                  >
+                    Download Laporan
+                  </UButton>
+                </div>
+              </UCard>
+            </div>
+
+            <!-- Tabel Monitoring Real-time -->
+            <div class="mt-6">
+              <h4 class="font-semibold mb-4">
+                Monitoring Operasi Berlangsung
+              </h4>
+              <UTable
+                :rows="operasiBerlangsungRows"
+                :columns="operasiBerlangsungColumns"
+              >
+                <!-- <template
+                    #start-data="{
+                      row
+                    }: {
+                      row: JadwalOperasi & { durasi: number };
+                    }"
+                  >
+                    {{ formatWaktu(row.start) }}
+                  </template> -->
+                <!-- <template
+                    #durasi-data="{
+                      row
+                    }: {
+                      row: JadwalOperasi & { durasi: number };
+                    }"
+                  >
+                    <UBadge
+                      :color="
+                        row.durasi > row.estimasiDurasi ? 'error' : 'success'
+                      "
+                      variant="soft"
+                    >
+                      {{ row.durasi }} / {{ row.estimasiDurasi }}
+                    </UBadge>
+                  </template> -->
+                <!-- <template
+                    #actions-data="{
+                      row
+                    }: {
+                      row: JadwalOperasi & { durasi: number };
+                    }"
+                  >
+                    <UButton
+                      size="xs"
+                      color="success"
+                      icon="i-heroicons-check"
+                      @click="selesaiOperasi(row.id)"
+                    >
+                      Selesai
+                    </UButton>
+                  </template> -->
+              </UTable>
+            </div>
+          </UCard>
+        </div>
+      </template>
+    </UTabs>
   </div>
 </template>
 
 <style scoped>
 :deep(.fc) {
-  font-family: inherit;
+  font-family: "Inter", sans-serif;
 }
 
 :deep(.fc-event) {
-  border-radius: 6px;
+  border-radius: 8px;
   border: none;
   font-size: 0.85rem;
-  padding: 2px 4px;
+  padding: 4px 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 :deep(.fc-timegrid-slot) {
-  height: 40px !important;
+  height: 50px !important;
 }
 
 :deep(.fc-button-primary) {
-  background-color: rgb(var(--color-primary-500));
-  border-color: rgb(var(--color-primary-500));
+  background-color: rgb(var(--color-primary-600));
+  border-color: rgb(var(--color-primary-600));
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
 }
 
 :deep(.fc-button-primary:hover) {
-  background-color: rgb(var(--color-primary-600));
-  border-color: rgb(var(--color-primary-600));
+  background-color: rgb(var(--color-primary-700));
+  border-color: rgb(var(--color-primary-700));
 }
 
 :deep(.fc-button-active) {
-  background-color: rgb(var(--color-primary-700)) !important;
-  border-color: rgb(var(--color-primary-700)) !important;
+  background-color: rgb(var(--color-primary-800)) !important;
+  border-color: rgb(var(--color-primary-800)) !important;
+}
+
+:deep(.fc-col-header-cell) {
+  padding: 12px;
+  font-weight: 600;
+  background-color: rgb(var(--color-gray-50));
+}
+
+:deep(.fc-timegrid-axis) {
+  font-weight: 500;
+  color: rgb(var(--color-gray-600));
 }
 </style>
