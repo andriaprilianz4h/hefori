@@ -62,6 +62,14 @@ const allChecked = computed(() => {
   return checklist.value.every(item => item.checked)
 })
 
+const checkedCount = computed(() => {
+  return checklist.value.filter(item => item.checked).length
+})
+
+const progressPercentage = computed(() => {
+  return (checkedCount.value / checklist.value.length) * 100
+})
+
 const resetChecklist = () => {
   checklist.value.forEach(item => (item.checked = false))
 }
@@ -71,38 +79,62 @@ const verifyComplete = () => {
     alert('Harap checklist semua dokumen terlebih dahulu')
     return
   }
-  // Handle verification
   patientData.value.status = 'Terverifikasi'
   alert('Verifikasi berhasil!')
 }
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 p-6 space-y-6">
-    <!-- Header Card -->
-    <UCard class="rounded-2xl shadow-sm border-0">
-      <div class="flex justify-between items-start">
-        <div>
-          <h1 class="text-2xl font-bold text-gray-900 mb-1">
-            {{ patientData.name }}
-          </h1>
-          <p class="text-sm text-gray-500">
-            MRN: {{ patientData.mrn }} • {{ patientData.procedure }}
-          </p>
+  <div
+    class="min-h-full bg-slate-50 dark:bg-slate-950 p-6 space-y-6 transition-colors duration-300"
+  >
+    <!-- Header Card dengan Glassmorphism -->
+    <UCard
+      class="rounded-2xl shadow-sm border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm dark:border dark:border-slate-800"
+      :ui="{ body: 'p-6' }"
+    >
+      <div
+        class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+      >
+        <div class="flex items-center gap-4">
+          <div
+            class="w-14 h-14 rounded-2xl bg-linear-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white shadow-lg shadow-primary-500/25"
+          >
+            <span class="text-xl font-bold">AW</span>
+          </div>
+          <div>
+            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
+              {{ patientData.name }}
+            </h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+              MRN: {{ patientData.mrn }} • {{ patientData.procedure }}
+            </p>
+          </div>
         </div>
-        <div class="text-right">
-          <p class="text-sm font-medium text-gray-900">
-            {{ patientData.date }}
-          </p>
-          <p class="text-sm text-gray-500 mb-2">
-            {{ patientData.time }}
-          </p>
+
+        <div class="text-left sm:text-right">
+          <div class="flex items-center gap-2 text-slate-900 dark:text-white">
+            <UIcon
+              name="i-heroicons-calendar"
+              class="w-4 h-4 text-slate-400"
+            />
+            <span class="font-medium">{{ patientData.date }}</span>
+          </div>
+          <div
+            class="flex items-center gap-2 text-slate-500 dark:text-slate-400 mt-1"
+          >
+            <UIcon
+              name="i-heroicons-clock"
+              class="w-4 h-4"
+            />
+            <span class="text-sm">{{ patientData.time }}</span>
+          </div>
           <UBadge
             :color="
               patientData.status === 'Terverifikasi' ? 'success' : 'warning'
             "
-            variant="soft"
-            class="text-xs"
+            variant="subtle"
+            class="mt-2"
           >
             {{ patientData.status }}
           </UBadge>
@@ -110,49 +142,100 @@ const verifyComplete = () => {
       </div>
     </UCard>
 
+    <!-- Progress Bar -->
+    <div
+      class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-2xl p-4 dark:border dark:border-slate-800"
+    >
+      <div class="flex justify-between items-center mb-2">
+        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Progress Verifikasi</span>
+        <span class="text-sm font-bold text-primary-600 dark:text-primary-400">{{ Math.round(progressPercentage) }}%</span>
+      </div>
+      <div
+        class="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden"
+      >
+        <div
+          class="h-full bg-linear-to-r from-primary-500 to-primary-600 transition-all duration-500 ease-out rounded-full"
+          :style="{ width: `${progressPercentage}%` }"
+        />
+      </div>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">
+        {{ checkedCount }} dari {{ checklist.length }} dokumen telah
+        diverifikasi
+      </p>
+    </div>
+
     <!-- Checklist Dokumen -->
     <UCard
-      class="rounded-2xl shadow-sm border-0"
+      class="rounded-2xl shadow-sm border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm dark:border dark:border-slate-800"
       :ui="{ body: 'p-6' }"
     >
-      <h2 class="text-lg font-semibold text-gray-900 mb-6">
-        Checklist Kelengkapan Dokumen
-      </h2>
+      <div class="flex items-center gap-3 mb-6">
+        <div
+          class="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400"
+        >
+          <UIcon
+            name="i-heroicons-clipboard-document-check"
+            class="w-5 h-5"
+          />
+        </div>
+        <h2 class="text-lg font-semibold text-slate-900 dark:text-white">
+          Checklist Kelengkapan Dokumen
+        </h2>
+      </div>
 
-      <div class="space-y-0">
+      <div class="space-y-2">
         <div
           v-for="item in checklist"
           :key="item.id"
-          class="flex items-center gap-4 py-4 border-b border-gray-100 last:border-0 cursor-pointer hover:bg-gray-50 transition-colors px-2 -mx-2 rounded-lg"
+          class="group flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-all duration-200 border border-transparent"
+          :class="[
+            item.checked
+              ? 'bg-emerald-50/50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800'
+              : 'bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 border-slate-200 dark:border-slate-700'
+          ]"
           @click="item.checked = !item.checked"
         >
-          <!-- Custom Checkbox -->
+          <!-- Animated Checkbox -->
           <div
-            class="w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 shrink-0"
+            class="w-6 h-6 rounded-lg flex items-center justify-center transition-all duration-300 shrink-0 border-2"
             :class="
               item.checked
-                ? 'bg-emerald-500 border-emerald-500'
-                : 'border-gray-300 bg-white hover:border-gray-400'
+                ? 'bg-emerald-500 border-emerald-500 scale-110'
+                : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 group-hover:border-emerald-400'
             "
           >
             <UIcon
               v-if="item.checked"
               name="i-heroicons-check"
-              class="w-3.5 h-3.5 text-white"
+              class="w-4 h-4 text-white"
             />
           </div>
 
-          <span
-            class="text-sm text-gray-700 select-none"
-            :class="{ 'text-gray-400': item.checked }"
-          >
-            {{ item.label }}
-          </span>
+          <div class="flex-1">
+            <span
+              class="text-sm font-medium transition-colors duration-200"
+              :class="
+                item.checked
+                  ? 'text-emerald-700 dark:text-emerald-400 line-through'
+                  : 'text-slate-700 dark:text-slate-300'
+              "
+            >
+              {{ item.label }}
+            </span>
+          </div>
+
+          <UIcon
+            v-if="item.checked"
+            name="i-heroicons-check-circle"
+            class="w-5 h-5 text-emerald-500"
+          />
         </div>
       </div>
 
       <!-- Action Buttons -->
-      <div class="flex justify-end gap-3 mt-8 pt-4">
+      <div
+        class="flex justify-end gap-3 mt-8 pt-6 border-t border-slate-200 dark:border-slate-700"
+      >
         <UButton
           variant="soft"
           color="neutral"
@@ -163,7 +246,8 @@ const verifyComplete = () => {
         <UButton
           color="success"
           :disabled="!allChecked"
-          class="gap-2"
+          :class="{ 'opacity-50 cursor-not-allowed': !allChecked }"
+          class="gap-2 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 transition-all"
           @click="verifyComplete"
         >
           <UIcon
@@ -177,34 +261,47 @@ const verifyComplete = () => {
 
     <!-- Status Logistik -->
     <UCard
-      class="rounded-2xl shadow-sm border-0"
+      class="rounded-2xl shadow-sm border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm dark:border dark:border-slate-800"
       :ui="{ body: 'p-6' }"
     >
-      <h2 class="text-lg font-semibold text-gray-900 mb-6">
-        Status Logistik & Ketersediaan
-      </h2>
+      <div class="flex items-center gap-3 mb-6">
+        <div
+          class="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+        >
+          <UIcon
+            name="i-heroicons-cube"
+            class="w-5 h-5"
+          />
+        </div>
+        <h2 class="text-lg font-semibold text-slate-900 dark:text-white">
+          Status Logistik & Ketersediaan
+        </h2>
+      </div>
 
-      <div class="grid md:grid-cols-2 gap-6">
+      <div class="grid md:grid-cols-2 gap-4">
         <div
           v-for="item in logistics"
           :key="item.id"
-          class="flex items-start gap-4"
+          class="flex items-start gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-colors"
         >
           <div
-            class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+            class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
             :class="{
-              'bg-emerald-50 text-emerald-600': item.color === 'emerald',
-              'bg-amber-50 text-amber-600': item.color === 'amber'
+              'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400':
+                item.color === 'emerald',
+              'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400':
+                item.color === 'amber'
             }"
           >
             <UIcon
               :name="item.icon"
-              class="w-5 h-5"
+              class="w-6 h-6"
             />
           </div>
+
           <div class="flex-1">
             <div class="flex items-center gap-2">
-              <h3 class="font-medium text-gray-900">
+              <h3 class="font-semibold text-slate-900 dark:text-slate-200">
                 {{ item.title }}
               </h3>
               <UIcon
@@ -217,10 +314,10 @@ const verifyComplete = () => {
                   'text-emerald-500': item.status === 'available',
                   'text-amber-500': item.status === 'warning'
                 }"
-                class="w-4 h-4"
+                class="w-5 h-5"
               />
             </div>
-            <p class="text-sm text-gray-500 mt-0.5">
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
               {{ item.description }}
             </p>
           </div>
@@ -228,12 +325,14 @@ const verifyComplete = () => {
       </div>
 
       <!-- Info Banner -->
-      <div class="mt-6 p-4 bg-blue-50 rounded-xl flex items-start gap-3">
+      <div
+        class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl flex items-start gap-3 border border-blue-200 dark:border-blue-800"
+      >
         <UIcon
           name="i-heroicons-information-circle"
-          class="w-5 h-5 text-blue-500 shrink-0 mt-0.5"
+          class="w-5 h-5 text-blue-500 dark:text-blue-400 shrink-0 mt-0.5"
         />
-        <p class="text-sm text-blue-700">
+        <p class="text-sm text-blue-700 dark:text-blue-300">
           Semua logistik harus tersedia sebelum pasien dapat dipindahkan ke area
           IBP.
         </p>

@@ -111,7 +111,9 @@ const editPembiusan = () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 p-6 space-y-6">
+  <div
+    class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 space-y-6 transition-colors duration-300"
+  >
     <!-- Header Card -->
     <div class="bg-success rounded-2xl p-6 text-white shadow-lg">
       <div class="flex justify-between items-start">
@@ -147,12 +149,12 @@ const editPembiusan = () => {
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <!-- Sign In -->
         <div
-          class="bg-white rounded-xl p-5 shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
+          class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow"
         >
-          <h3 class="font-semibold text-slate-800 mb-1">
+          <h3 class="font-semibold text-slate-800 dark:text-slate-100 mb-1">
             Sign In
           </h3>
-          <p class="text-sm text-slate-500 mb-4">
+          <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
             Verifikasi identitas & prosedur
           </p>
 
@@ -209,9 +211,9 @@ const editPembiusan = () => {
 
         <!-- Time Out -->
         <div
-          class="bg-white rounded-xl p-5 shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
+          class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow"
         >
-          <h3 class="font-semibold text-slate-800 mb-1">
+          <h3 class="font-semibold text-slate-800 dark:text-slate-100 mb-1">
             Time Out
           </h3>
           <p class="text-sm text-slate-500 mb-4">
@@ -271,9 +273,9 @@ const editPembiusan = () => {
 
         <!-- Sign Out -->
         <div
-          class="bg-white rounded-xl p-5 shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
+          class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow"
         >
-          <h3 class="font-semibold text-slate-800 mb-1">
+          <h3 class="font-semibold text-slate-800 dark:text-slate-100 mb-1">
             Sign Out
           </h3>
           <p class="text-sm text-slate-500 mb-4">
@@ -362,10 +364,12 @@ const editPembiusan = () => {
             </svg>
           </div>
           <div>
-            <p class="font-semibold text-slate-800">
+            <p
+              class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400"
+            >
               {{ member.role }}
             </p>
-            <p class="text-sm text-slate-500">
+            <p class="text-sm font-semibold text-slate-800 dark:text-slate-100">
               {{ member.name }}
             </p>
           </div>
@@ -376,8 +380,10 @@ const editPembiusan = () => {
     <!-- Time Tracking Section (Waktu Insisi & Pembiusan) -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <!-- Waktu Insisi -->
-      <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-200">
-        <h3 class="font-semibold text-slate-800 mb-4">
+      <div
+        class="bg-white dark:bg-slate-900 rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-800"
+      >
+        <h3 class="font-semibold text-slate-800 dark:text-slate-100 mb-1">
           Waktu Insisi
         </h3>
 
@@ -473,8 +479,10 @@ const editPembiusan = () => {
       </div>
 
       <!-- Waktu Pembiusan -->
-      <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-200">
-        <h3 class="font-semibold text-slate-800 mb-4">
+      <div
+        class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-700"
+      >
+        <h3 class="font-semibold text-slate-800 dark:text-slate-100 mb-1">
           Waktu Pembiusan
         </h3>
 
@@ -499,7 +507,7 @@ const editPembiusan = () => {
               />
             </svg>
           </div>
-          <p class="text-sm text-slate-500 mb-4">
+          <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
             Waktu pembiusan belum tercatat
           </p>
           <button

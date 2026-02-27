@@ -151,6 +151,18 @@ const operasiBerlangsungColumns: TableColumn<OperasiRow>[] = [
   { accessorKey: 'estimasiDurasi', header: 'Estimasi' },
   { accessorKey: 'actions', header: 'Aksi' }
 ]
+const prediksiSelesai = computed(() => {
+  if (!form.jamMulai || !form.estimasiDurasi || !form.tanggal) {
+    return '--:--'
+  }
+
+  return formatWaktu(
+    calculateEndTime(
+      new Date(`${form.tanggal}T${form.jamMulai}`),
+      form.estimasiDurasi
+    )
+  )
+})
 // ==================== COMPUTED ====================
 
 // const events = computed(() => {
@@ -204,8 +216,8 @@ const okTersedia = computed(() => {
 
 // ==================== METHODS ====================
 
-const generateId = () =>
-  `IBP-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`
+// const generateId = () =>
+//   `IBP-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`
 
 const getRuangColor = (kode: string) => {
   return ruangOKList.value.find(r => r.kode === kode)?.color || '#6b7280'
@@ -220,25 +232,25 @@ const calculateEndTime = (start: Date | string, durasiMenit: number) => {
   return new Date(startDate.getTime() + durasiMenit * 60000)
 }
 
-const checkConflict = (
-  ruang: string,
-  start: Date,
-  end: Date,
-  excludeId?: string
-) => {
-  return jadwalList.value.some((j) => {
-    if (j.ruangOK !== ruang) return false
-    if (excludeId && j.id === excludeId) return false
-    if (j.status === 'batal') return false
+// const checkConflict = (
+//   ruang: string,
+//   start: Date,
+//   end: Date,
+//   excludeId?: string
+// ) => {
+//   return jadwalList.value.some((j) => {
+//     if (j.ruangOK !== ruang) return false
+//     if (excludeId && j.id === excludeId) return false
+//     if (j.status === 'batal') return false
 
-    const jStart = new Date(j.start).getTime()
-    const jEnd = new Date(j.end).getTime()
-    const newStart = new Date(start).getTime()
-    const newEnd = new Date(end).getTime()
+//     const jStart = new Date(j.start).getTime()
+//     const jEnd = new Date(j.end).getTime()
+//     const newStart = new Date(start).getTime()
+//     const newEnd = new Date(end).getTime()
 
-    return newStart < jEnd && newEnd > jStart
-  })
-}
+//     return newStart < jEnd && newEnd > jStart
+//   })
+// }
 
 const getSlotRonde = (ruangKode: string, tanggal: string, ronde: number) => {
   const rondeData = rondeConfig.value.find(r => r.ronde === ronde)
@@ -276,143 +288,143 @@ const getSlotRonde = (ruangKode: string, tanggal: string, ronde: number) => {
   }
 }
 
-const autoSchedule = () => {
-  if (!form.tanggal || !form.estimasiDurasi) return
+// const autoSchedule = () => {
+//   if (!form.tanggal || !form.estimasiDurasi) return
 
-  // Cari slot kosong otomatis
-  for (const ruang of okTersedia.value) {
-    for (const ronde of rondeConfig.value) {
-      const slot = getSlotRonde(ruang.kode, form.tanggal, ronde.ronde)
-      if (slot && slot.tersedia && slot.sisaWaktu >= form.estimasiDurasi) {
-        form.ruangOK = ruang.kode
-        form.ronde = ronde.ronde
-        form.jamMulai = ronde.waktuMulai
+//   // Cari slot kosong otomatis
+//   for (const ruang of okTersedia.value) {
+//     for (const ronde of rondeConfig.value) {
+//       const slot = getSlotRonde(ruang.kode, form.tanggal, ronde.ronde)
+//       if (slot && slot.tersedia && slot.sisaWaktu >= form.estimasiDurasi) {
+//         form.ruangOK = ruang.kode
+//         form.ronde = ronde.ronde
+//         form.jamMulai = ronde.waktuMulai
 
-        // Hitung jam selesai berdasarkan jadwal existing di ronde ini
-        const existingInRonde = jadwalList.value.filter(
-          j =>
-            j.ruangOK === ruang.kode
-            && j.tanggal === form.tanggal
-            && j.ronde === ronde.ronde
-            && j.status !== 'batal'
-        )
+//         // Hitung jam selesai berdasarkan jadwal existing di ronde ini
+//         const existingInRonde = jadwalList.value.filter(
+//           j =>
+//             j.ruangOK === ruang.kode
+//             && j.tanggal === form.tanggal
+//             && j.ronde === ronde.ronde
+//             && j.status !== 'batal'
+//         )
 
-        if (existingInRonde.length > 0) {
-          const lastEnd = Math.max(
-            ...existingInRonde.map(j => new Date(j.end).getTime())
-          )
-          const startTime = new Date(lastEnd)
-          form.jamMulai = `${String(startTime.getHours()).padStart(2, '0')}:${String(startTime.getMinutes()).padStart(2, '0')}`
-        }
+//         if (existingInRonde.length > 0) {
+//           const lastEnd = Math.max(
+//             ...existingInRonde.map(j => new Date(j.end).getTime())
+//           )
+//           const startTime = new Date(lastEnd)
+//           form.jamMulai = `${String(startTime.getHours()).padStart(2, '0')}:${String(startTime.getMinutes()).padStart(2, '0')}`
+//         }
 
-        return
-      }
-    }
-  }
-}
+//         return
+//       }
+//     }
+//   }
+// }
 
-const tambahJadwal = () => {
-  if (!form.pasien || !form.ruangOK || !form.tanggal || !form.jamMulai) {
-    toast.add({
-      title: 'Error',
-      description: 'Lengkapi data wajib!',
-      color: 'error'
-    })
-    return
-  }
+// const tambahJadwal = () => {
+//   if (!form.pasien || !form.ruangOK || !form.tanggal || !form.jamMulai) {
+//     toast.add({
+//       title: 'Error',
+//       description: 'Lengkapi data wajib!',
+//       color: 'error'
+//     })
+//     return
+//   }
 
-  const start = new Date(`${form.tanggal}T${form.jamMulai}`)
-  const end = calculateEndTime(start, form.estimasiDurasi)
+//   const start = new Date(`${form.tanggal}T${form.jamMulai}`)
+//   const end = calculateEndTime(start, form.estimasiDurasi)
 
-  if (checkConflict(form.ruangOK, start, end)) {
-    toast.add({
-      title: 'Konflik!',
-      description: 'Jadwal bertabrakan dengan operasi lain',
-      color: 'error'
-    })
-    return
-  }
+//   if (checkConflict(form.ruangOK, start, end)) {
+//     toast.add({
+//       title: 'Konflik!',
+//       description: 'Jadwal bertabrakan dengan operasi lain',
+//       color: 'error'
+//     })
+//     return
+//   }
 
-  const newJadwal: JadwalOperasi = {
-    id: generateId(),
-    pasien: form.pasien,
-    noRM: form.noRM,
-    operator: form.operator,
-    asisten: form.asisten,
-    tindakan: form.tindakan,
-    ruangOK: form.ruangOK,
-    ronde: form.ronde,
-    estimasiDurasi: form.estimasiDurasi,
-    tanggal: form.tanggal,
-    start,
-    end,
-    status: 'terjadwal',
-    color: getRuangColor(form.ruangOK),
-    sikompasId: form.sikompasId || `SK-${Date.now()}`
-  }
+//   const newJadwal: JadwalOperasi = {
+//     id: generateId(),
+//     pasien: form.pasien,
+//     noRM: form.noRM,
+//     operator: form.operator,
+//     asisten: form.asisten,
+//     tindakan: form.tindakan,
+//     ruangOK: form.ruangOK,
+//     ronde: form.ronde,
+//     estimasiDurasi: form.estimasiDurasi,
+//     tanggal: form.tanggal,
+//     start,
+//     end,
+//     status: 'terjadwal',
+//     color: getRuangColor(form.ruangOK),
+//     sikompasId: form.sikompasId || `SK-${Date.now()}`
+//   }
 
-  jadwalList.value.push(newJadwal)
-  toast.add({
-    title: 'Sukses',
-    description: 'Jadwal operasi berhasil ditambahkan',
-    color: 'success'
-  })
-  resetForm()
-  calendarKey.value++
-}
+//   jadwalList.value.push(newJadwal)
+//   toast.add({
+//     title: 'Sukses',
+//     description: 'Jadwal operasi berhasil ditambahkan',
+//     color: 'success'
+//   })
+//   resetForm()
+//   calendarKey.value++
+// }
 
-const updateJadwal = () => {
-  if (!selectedEvent.value) return
+// const updateJadwal = () => {
+//   if (!selectedEvent.value) return
 
-  const start = new Date(`${form.tanggal}T${form.jamMulai}`)
-  const end = calculateEndTime(start, form.estimasiDurasi)
+//   const start = new Date(`${form.tanggal}T${form.jamMulai}`)
+//   const end = calculateEndTime(start, form.estimasiDurasi)
 
-  if (checkConflict(form.ruangOK, start, end, selectedEvent.value.id)) {
-    toast.add({
-      title: 'Konflik!',
-      description: 'Jadwal bertabrakan',
-      color: 'error'
-    })
-    return
-  }
+//   if (checkConflict(form.ruangOK, start, end, selectedEvent.value.id)) {
+//     toast.add({
+//       title: 'Konflik!',
+//       description: 'Jadwal bertabrakan',
+//       color: 'error'
+//     })
+//     return
+//   }
 
-  const index = jadwalList.value.findIndex(
-    j => j.id === selectedEvent.value!.id
-  )
-  if (index !== -1) {
-    jadwalList.value[index] = {
-      ...selectedEvent.value,
-      ...form,
-      tanggal: form.tanggal,
-      start,
-      end,
-      color: getRuangColor(form.ruangOK)
-    }
-    toast.add({
-      title: 'Sukses',
-      description: 'Jadwal berhasil diupdate',
-      color: 'success'
-    })
-    resetForm()
-    calendarKey.value++
-  }
-}
+//   const index = jadwalList.value.findIndex(
+//     j => j.id === selectedEvent.value!.id
+//   )
+//   if (index !== -1) {
+//     jadwalList.value[index] = {
+//       ...selectedEvent.value,
+//       ...form,
+//       tanggal: form.tanggal,
+//       start,
+//       end,
+//       color: getRuangColor(form.ruangOK)
+//     }
+//     toast.add({
+//       title: 'Sukses',
+//       description: 'Jadwal berhasil diupdate',
+//       color: 'success'
+//     })
+//     resetForm()
+//     calendarKey.value++
+//   }
+// }
 
-const hapusJadwal = (id: string) => {
-  const jadwal = jadwalList.value.find(j => j.id === id)
+// const hapusJadwal = (id: string) => {
+//   const jadwal = jadwalList.value.find(j => j.id === id)
 
-  if (!jadwal) return
+//   if (!jadwal) return
 
-  jadwal.status = 'batal'
+//   jadwal.status = 'batal'
 
-  toast.add({
-    title: 'Info',
-    description: 'Jadwal dibatalkan',
-    color: 'warning'
-  })
+//   toast.add({
+//     title: 'Info',
+//     description: 'Jadwal dibatalkan',
+//     color: 'warning'
+//   })
 
-  if (selectedEvent.value?.id === id) resetForm()
-}
+//   if (selectedEvent.value?.id === id) resetForm()
+// }
 
 const _mulaiOperasi = (id: string) => {
   const jadwal = jadwalList.value.find(j => j.id === id)
@@ -464,23 +476,23 @@ const editJadwal = (jadwal: JadwalOperasi) => {
   activeTab.value = 'form'
 }
 
-const resetForm = () => {
-  Object.assign(form, {
-    pasien: '',
-    noRM: '',
-    operator: '',
-    asisten: '',
-    tindakan: '',
-    ruangOK: '',
-    ronde: 1,
-    estimasiDurasi: 120,
-    tanggal: selectedDate.value,
-    jamMulai: '',
-    sikompasId: ''
-  })
-  isEditMode.value = false
-  selectedEvent.value = null
-}
+// const resetForm = () => {
+//   Object.assign(form, {
+//     pasien: '',
+//     noRM: '',
+//     operator: '',
+//     asisten: '',
+//     tindakan: '',
+//     ruangOK: '',
+//     ronde: 1,
+//     estimasiDurasi: 120,
+//     tanggal: selectedDate.value,
+//     jamMulai: '',
+//     sikompasId: ''
+//   })
+//   isEditMode.value = false
+//   selectedEvent.value = null
+// }
 
 // ==================== CALENDAR HANDLERS ====================
 
@@ -558,7 +570,9 @@ const toast = useToast()
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 p-6 space-y-6">
+  <div
+    class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 space-y-6 transition-colors duration-300"
+  >
     <!-- Statistik Dashboard -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
       <UCard
@@ -718,7 +732,7 @@ const toast = useToast()
             <UCard class="shadow-sm">
               <template #header>
                 <h3
-                  class="text-sm font-semibold uppercase tracking-wider text-gray-500"
+                  class="text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400"
                 >
                   Jadwal Hari Ini
                 </h3>
@@ -728,25 +742,31 @@ const toast = useToast()
                 <div
                   v-for="(jadwalGroup, ruangKode) in jadwalByRuang"
                   :key="ruangKode"
-                  class="border-l-4 rounded-r-lg p-3 bg-gray-50"
+                  class="border-l-4 rounded-r-lg p-3 bg-gray-50 dark:bg-gray-800"
                   :style="{
                     borderLeftColor: getRuangColor(ruangKode)
                   }"
                 >
-                  <h4 class="font-semibold text-sm mb-2">
+                  <h4
+                    class="font-semibold text-sm mb-2 text-gray-800 dark:text-gray-200"
+                  >
                     {{ getRuangName(ruangKode) }}
                   </h4>
+
                   <div class="space-y-2">
                     <div
                       v-for="j in jadwalGroup"
                       :key="j.id"
-                      class="bg-white p-2 rounded border text-xs cursor-pointer hover:shadow-md transition-shadow"
+                      class="bg-white dark:bg-gray-900 p-2 rounded border border-gray-200 dark:border-gray-700 text-xs cursor-pointer hover:shadow-md dark:hover:shadow-gray-800 transition-shadow"
                       @click="editJadwal(j)"
                     >
                       <div class="flex justify-between items-start">
-                        <span class="font-medium">{{
-                          formatWaktu(j.start)
-                        }}</span>
+                        <span
+                          class="font-medium text-gray-800 dark:text-gray-200"
+                        >
+                          {{ formatWaktu(j.start) }}
+                        </span>
+
                         <UBadge
                           :color="getStatusColor(j.status)"
                           size="xs"
@@ -754,10 +774,14 @@ const toast = useToast()
                           {{ j.status }}
                         </UBadge>
                       </div>
-                      <p class="font-semibold mt-1 truncate">
+
+                      <p
+                        class="font-semibold mt-1 truncate text-gray-800 dark:text-gray-100"
+                      >
                         {{ j.pasien }}
                       </p>
-                      <p class="text-gray-500 truncate">
+
+                      <p class="text-gray-500 dark:text-gray-400 truncate">
                         {{ j.tindakan }}
                       </p>
                     </div>
@@ -775,7 +799,9 @@ const toast = useToast()
           <!-- Konfigurasi Ronde -->
           <UCard>
             <template #header>
-              <h3 class="text-lg font-semibold">
+              <h3
+                class="text-lg font-semibold text-gray-800 dark:text-gray-100"
+              >
                 Konfigurasi Ronde Operasi
               </h3>
             </template>
@@ -784,24 +810,26 @@ const toast = useToast()
               <div
                 v-for="ronde in rondeConfig"
                 :key="ronde.ronde"
-                class="border rounded-xl p-4 bg-linear-to-br from-gray-50 to-white"
+                class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 bg-linear-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900"
               >
                 <div class="flex items-center gap-3 mb-3">
                   <div
-                    class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-bold"
+                    class="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-300 font-bold"
                   >
                     {{ ronde.ronde }}
                   </div>
+
                   <div>
-                    <h4 class="font-semibold">
+                    <h4 class="font-semibold text-gray-800 dark:text-gray-100">
                       Ronde {{ ronde.ronde }}
                     </h4>
-                    <p class="text-sm text-gray-500">
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
                       {{ ronde.waktuMulai }} - {{ ronde.waktuSelesai }}
                     </p>
                   </div>
                 </div>
-                <div class="text-sm text-gray-600">
+
+                <div class="text-sm text-gray-600 dark:text-gray-300">
                   <p>Durasi Default: {{ ronde.durasiDefault }} menit</p>
                 </div>
               </div>
@@ -812,7 +840,9 @@ const toast = useToast()
           <UCard>
             <template #header>
               <div class="flex items-center justify-between">
-                <h3 class="text-lg font-semibold">
+                <h3
+                  class="text-lg font-semibold text-gray-800 dark:text-gray-100"
+                >
                   Matrix Plotting Ruangan
                 </h3>
                 <UInput
@@ -825,27 +855,33 @@ const toast = useToast()
             <div class="overflow-x-auto">
               <table class="w-full">
                 <thead>
-                  <tr class="border-b">
-                    <th class="text-left p-4 font-semibold text-gray-700">
+                  <tr class="border-b border-gray-200 dark:border-gray-700">
+                    <th
+                      class="text-left p-4 font-semibold text-gray-700 dark:text-gray-200"
+                    >
                       Ruang OK
                     </th>
+
                     <th
                       v-for="ronde in rondeConfig"
                       :key="ronde.ronde"
-                      class="text-center p-4 font-semibold text-gray-700 w-1/4"
+                      class="text-center p-4 font-semibold text-gray-700 dark:text-gray-200 w-1/4"
                     >
                       Ronde {{ ronde.ronde }}
-                      <div class="text-xs font-normal text-gray-500">
+                      <div
+                        class="text-xs font-normal text-gray-500 dark:text-gray-400"
+                      >
                         {{ ronde.waktuMulai }} - {{ ronde.waktuSelesai }}
                       </div>
                     </th>
                   </tr>
                 </thead>
+
                 <tbody>
                   <tr
                     v-for="ruang in ruangOKList"
                     :key="ruang.id"
-                    class="border-b hover:bg-gray-50"
+                    class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                   >
                     <td class="p-4">
                       <div class="flex items-center gap-3">
@@ -854,15 +890,18 @@ const toast = useToast()
                           :style="{ backgroundColor: ruang.color }"
                         />
                         <div>
-                          <p class="font-semibold">
+                          <p
+                            class="font-semibold text-gray-800 dark:text-gray-100"
+                          >
                             {{ ruang.nama }}
                           </p>
-                          <p class="text-xs text-gray-500">
+                          <p class="text-xs text-gray-500 dark:text-gray-400">
                             Kapasitas: {{ ruang.kapasitasRonde }}
                           </p>
                         </div>
                       </div>
                     </td>
+
                     <td
                       v-for="ronde in rondeConfig"
                       :key="ronde.ronde"
@@ -878,14 +917,17 @@ const toast = useToast()
                               && j.status !== 'batal'
                           )"
                           :key="j.id"
-                          class="bg-white border-l-4 p-2 rounded shadow-sm text-xs cursor-pointer hover:shadow-md transition-all"
+                          class="bg-white dark:bg-gray-900 border-l-4 border border-gray-200 dark:border-gray-700 p-2 rounded shadow-sm text-xs cursor-pointer hover:shadow-md dark:hover:shadow-gray-800 transition-all"
                           :style="{ borderLeftColor: ruang.color }"
                           @click="editJadwal(j)"
                         >
                           <div class="flex justify-between items-center mb-1">
-                            <span class="font-semibold">{{
-                              formatWaktu(j.start)
-                            }}</span>
+                            <span
+                              class="font-semibold text-gray-800 dark:text-gray-100"
+                            >
+                              {{ formatWaktu(j.start) }}
+                            </span>
+
                             <UBadge
                               :color="getStatusColor(j.status)"
                               size="xs"
@@ -894,14 +936,19 @@ const toast = useToast()
                               {{ j.status }}
                             </UBadge>
                           </div>
-                          <p class="truncate font-medium">
+
+                          <p
+                            class="truncate font-medium text-gray-800 dark:text-gray-100"
+                          >
                             {{ j.pasien }}
                           </p>
-                          <p class="truncate text-gray-500">
+
+                          <p class="truncate text-gray-500 dark:text-gray-400">
                             {{ j.tindakan }}
                           </p>
+
                           <div
-                            class="mt-1 flex items-center gap-1 text-gray-400"
+                            class="mt-1 flex items-center gap-1 text-gray-400 dark:text-gray-500"
                           >
                             <UIcon
                               name="i-heroicons-clock"
@@ -911,13 +958,13 @@ const toast = useToast()
                           </div>
                         </div>
 
-                        <!-- Slot Kosong Indicator -->
+                        <!-- Slot Kosong -->
                         <div
                           v-if="
                             getSlotRonde(ruang.kode, selectedDate, ronde.ronde)
                               ?.jumlahJadwal === 0
                           "
-                          class="border-2 border-dashed border-gray-200 rounded p-4 text-center text-gray-400 text-xs"
+                          class="border-2 border-dashed border-gray-200 dark:border-gray-700 rounded p-4 text-center text-gray-400 dark:text-gray-500 text-xs"
                         >
                           <UIcon
                             name="i-heroicons-plus"
@@ -937,16 +984,18 @@ const toast = useToast()
 
       <!-- TAB: FORM INPUT -->
       <template #form>
-        <div class="max-w-4xl mx-auto">
-          <UCard class="shadow-lg">
+        <div class="space-y-6">
+          <UCard class="shadow-xl">
+            <!-- ================= HEADER ================= -->
             <template #header>
-              <div class="flex items-center gap-3">
+              <div class="flex items-start gap-4">
+                <!-- Icon -->
                 <div
-                  class="w-10 h-10 rounded-full flex items-center justify-center"
+                  class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
                   :class="
                     isEditMode
-                      ? 'bg-amber-100 text-amber-600'
-                      : 'bg-primary-100 text-primary-600'
+                      ? 'bg-warning/10 text-warning'
+                      : 'bg-primary/10 text-primary'
                   "
                 >
                   <UIcon
@@ -955,16 +1004,19 @@ const toast = useToast()
                         ? 'i-heroicons-pencil-square'
                         : 'i-heroicons-plus'
                     "
-                    class="w-5 h-5"
+                    class="w-6 h-6"
                   />
                 </div>
-                <div>
-                  <h3 class="text-lg font-semibold">
+
+                <!-- Title -->
+                <div class="flex-1">
+                  <h3 class="text-xl font-semibold text-default leading-tight">
                     {{
                       isEditMode ? "Edit Jadwal Operasi" : "Tambah Jadwal Baru"
                     }}
                   </h3>
-                  <p class="text-sm text-gray-500">
+
+                  <p class="text-sm text-muted mt-1">
                     {{
                       isEditMode
                         ? "Modifikasi data operasi yang sudah terjadwal"
@@ -975,109 +1027,140 @@ const toast = useToast()
               </div>
             </template>
 
-            <div class="space-y-6">
-              <!-- Row 1: Info Pasien -->
-              <div class="grid md:grid-cols-2 gap-4">
-                <UFormGroup
-                  label="Nama Pasien"
-                  required
+            <!-- ================= CONTENT ================= -->
+            <div class="space-y-8">
+              <!-- INFORMASI PASIEN -->
+              <div class="space-y-4">
+                <h4
+                  class="text-sm font-semibold text-muted uppercase tracking-wider"
                 >
-                  <UInput
-                    v-model="form.pasien"
-                    placeholder="Nama lengkap pasien"
-                    icon="i-heroicons-user"
-                  />
-                </UFormGroup>
-
-                <UFormGroup label="Nomor RM">
-                  <UInput
-                    v-model="form.noRM"
-                    placeholder="Nomor Rekam Medis"
-                    icon="i-heroicons-identification"
-                  />
-                </UFormGroup>
-              </div>
-
-              <!-- Row 2: Tim Operasi -->
-              <div class="grid md:grid-cols-2 gap-4">
-                <UFormGroup
-                  label="Operator (Dokter)"
-                  required
-                >
-                  <USelectMenu
-                    v-model="form.operator"
-                    :options="[
-                      'Dr. Ahmad',
-                      'Dr. Budi',
-                      'Dr. Citra',
-                      'Dr. Diana',
-                      'Dr. Eko'
-                    ]"
-                    placeholder="Pilih dokter operator"
-                    icon="i-heroicons-user-circle"
-                  />
-                </UFormGroup>
-
-                <UFormGroup label="Asisten">
-                  <UInput
-                    v-model="form.asisten"
-                    placeholder="Nama asisten/PPA"
-                    icon="i-heroicons-users"
-                  />
-                </UFormGroup>
-              </div>
-
-              <!-- Row 3: Tindakan & SiKompas -->
-              <div class="grid md:grid-cols-2 gap-4">
-                <UFormGroup
-                  label="Tindakan Operasi"
-                  required
-                >
-                  <USelectMenu
-                    v-model="form.tindakan"
-                    :options="[
-                      'Appendektomi',
-                      'Herniorafi',
-                      'Laparoskopi',
-                      'Mastektomi',
-                      'Thyroidectomy',
-                      'Lainnya'
-                    ]"
-                    placeholder="Pilih tindakan"
-                    icon="i-heroicons-clipboard-document-list"
-                  />
-                </UFormGroup>
-
-                <UFormGroup label="ID SiKompas">
-                  <UInput
-                    v-model="form.sikompasId"
-                    placeholder="Auto-generate jika kosong"
-                    icon="i-heroicons-link"
-                  >
-                    <template #trailing>
-                      <UBadge
-                        color="primary"
-                        variant="soft"
-                        size="xs"
-                      >
-                        SiKompas
-                      </UBadge>
-                    </template>
-                  </UInput>
-                </UFormGroup>
-              </div>
-
-              <!-- Row 4: Plotting Ruang & Waktu -->
-              <div class="bg-gray-50 p-4 rounded-xl space-y-4">
-                <h4 class="font-semibold text-gray-700 flex items-center gap-2">
-                  <UIcon
-                    name="i-heroicons-map-pin"
-                    class="w-5 h-5 text-primary-500"
-                  />
-                  Plotting Ruang & Ronde
+                  Informasi Pasien
                 </h4>
 
-                <div class="grid md:grid-cols-4 gap-4">
+                <div class="grid md:grid-cols-2 gap-6">
+                  <UFormGroup
+                    label="Nama Pasien"
+                    required
+                  >
+                    <UInput
+                      v-model="form.pasien"
+                      placeholder="Nama lengkap pasien"
+                      icon="i-heroicons-user"
+                      size="lg"
+                    />
+                  </UFormGroup>
+
+                  <UFormGroup label="Nomor RM">
+                    <UInput
+                      v-model="form.noRM"
+                      placeholder="Nomor Rekam Medis"
+                      icon="i-heroicons-identification"
+                      size="lg"
+                    />
+                  </UFormGroup>
+                </div>
+              </div>
+
+              <!-- TIM OPERASI -->
+              <div class="space-y-4">
+                <h4
+                  class="text-sm font-semibold text-muted uppercase tracking-wider"
+                >
+                  Tim Operasi
+                </h4>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                  <UFormGroup
+                    label="Operator (Dokter)"
+                    required
+                  >
+                    <USelectMenu
+                      v-model="form.operator"
+                      :options="[
+                        'Dr. Ahmad',
+                        'Dr. Budi',
+                        'Dr. Citra',
+                        'Dr. Diana',
+                        'Dr. Eko'
+                      ]"
+                      placeholder="Pilih dokter operator"
+                      icon="i-heroicons-user-circle"
+                      size="lg"
+                    />
+                  </UFormGroup>
+
+                  <UFormGroup label="Asisten">
+                    <UInput
+                      v-model="form.asisten"
+                      placeholder="Nama asisten/PPA"
+                      icon="i-heroicons-users"
+                      size="lg"
+                    />
+                  </UFormGroup>
+                </div>
+              </div>
+
+              <!-- DETAIL TINDAKAN -->
+              <div class="space-y-4">
+                <h4
+                  class="text-sm font-semibold text-muted uppercase tracking-wider"
+                >
+                  Detail Tindakan
+                </h4>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                  <UFormGroup
+                    label="Tindakan Operasi"
+                    required
+                  >
+                    <USelectMenu
+                      v-model="form.tindakan"
+                      :options="[
+                        'Appendektomi',
+                        'Herniorafi',
+                        'Laparoskopi',
+                        'Mastektomi',
+                        'Thyroidectomy',
+                        'Lainnya'
+                      ]"
+                      placeholder="Pilih tindakan"
+                      icon="i-heroicons-clipboard-document-list"
+                      size="lg"
+                    />
+                  </UFormGroup>
+
+                  <UFormGroup label="ID SiKompas">
+                    <UInput
+                      v-model="form.sikompasId"
+                      placeholder="Auto-generate jika kosong"
+                      icon="i-heroicons-link"
+                      size="lg"
+                    >
+                      <template #trailing>
+                        <UBadge
+                          color="primary"
+                          variant="soft"
+                          size="xs"
+                        >
+                          SiKompas
+                        </UBadge>
+                      </template>
+                    </UInput>
+                  </UFormGroup>
+                </div>
+              </div>
+
+              <!-- PLOTTING -->
+              <div
+                class="bg-muted/40 border border-default rounded-2xl p-6 space-y-6"
+              >
+                <h4
+                  class="text-sm font-semibold text-muted uppercase tracking-wider"
+                >
+                  Plotting Ruang & Waktu
+                </h4>
+
+                <div class="grid md:grid-cols-4 gap-6">
                   <UFormGroup
                     label="Tanggal"
                     required
@@ -1085,7 +1168,7 @@ const toast = useToast()
                     <UInput
                       v-model="form.tanggal"
                       type="date"
-                      @change="autoSchedule"
+                      size="lg"
                     />
                   </UFormGroup>
 
@@ -1101,7 +1184,7 @@ const toast = useToast()
                           .map((r) => ({ label: r.nama, value: r.kode }))
                       "
                       placeholder="Pilih ruang"
-                      @change="autoSchedule"
+                      size="lg"
                     />
                   </UFormGroup>
 
@@ -1114,51 +1197,24 @@ const toast = useToast()
                           value: r.ronde
                         }))
                       "
-                      @change="autoSchedule"
+                      size="lg"
                     />
                   </UFormGroup>
 
-                  <UFormGroup label="Estimasi Durasi (menit)">
+                  <UFormGroup label="Estimasi (menit)">
                     <UInput
                       v-model.number="form.estimasiDurasi"
                       type="number"
                       min="30"
                       step="30"
-                      @change="autoSchedule"
-                    >
-                      <template #trailing>
-                        <span class="text-gray-400 text-sm">menit</span>
-                      </template>
-                    </UInput>
+                      size="lg"
+                    />
                   </UFormGroup>
-                </div>
-
-                <!-- Auto Schedule Info -->
-                <div
-                  v-if="form.ruangOK && form.ronde"
-                  class="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-center gap-3"
-                >
-                  <UIcon
-                    name="i-heroicons-light-bulb"
-                    class="w-5 h-5 text-blue-500"
-                  />
-                  <div class="text-sm text-blue-700">
-                    <span class="font-semibold">Rekomendasi:</span>
-                    Ronde {{ form.ronde }} di
-                    {{ getRuangName(form.ruangOK) }} slot
-                    {{
-                      getSlotRonde(form.ruangOK, form.tanggal, form.ronde)
-                        ?.jumlahJadwal || 0
-                    }}/{{
-                      ruangOKList.find((r) => r.kode === form.ruangOK)
-                        ?.kapasitasRonde
-                    }}
-                  </div>
                 </div>
               </div>
 
-              <!-- Row 5: Waktu Spesifik -->
-              <div class="grid md:grid-cols-2 gap-4">
+              <!-- WAKTU -->
+              <div class="grid md:grid-cols-2 gap-6">
                 <UFormGroup
                   label="Jam Mulai"
                   required
@@ -1166,21 +1222,13 @@ const toast = useToast()
                   <UInput
                     v-model="form.jamMulai"
                     type="time"
+                    size="lg"
                   />
                 </UFormGroup>
 
                 <UFormGroup label="Prediksi Selesai">
                   <UInput
-                    :model-value="
-                      form.jamMulai && form.estimasiDurasi
-                        ? formatWaktu(
-                          calculateEndTime(
-                            new Date(`${form.tanggal}T${form.jamMulai}`),
-                            form.estimasiDurasi
-                          )
-                        )
-                        : '--:--'
-                    "
+                    :model-value="prediksiSelesai"
                     disabled
                     icon="i-heroicons-calculator"
                   />
@@ -1188,40 +1236,40 @@ const toast = useToast()
               </div>
             </div>
 
+            <!-- ================= FOOTER ================= -->
             <template #footer>
-              <div class="flex justify-between items-center">
+              <div
+                class="flex flex-col md:flex-row md:justify-between md:items-center gap-4"
+              >
                 <UButton
                   v-if="isEditMode && selectedEvent"
                   color="error"
                   variant="soft"
                   icon="i-heroicons-trash"
-                  @click="hapusJadwal(selectedEvent.id)"
                 >
                   Batalkan Jadwal
                 </UButton>
-                <div v-else />
 
-                <div class="flex gap-3">
+                <div class="flex gap-3 justify-end">
                   <UButton
                     variant="soft"
                     color="neutral"
-                    @click="resetForm"
                   >
                     Reset
                   </UButton>
+
                   <UButton
                     v-if="isEditMode"
                     color="primary"
                     icon="i-heroicons-check"
-                    @click="updateJadwal"
                   >
                     Update Jadwal
                   </UButton>
+
                   <UButton
                     v-else
                     color="primary"
                     icon="i-heroicons-plus"
-                    @click="tambahJadwal"
                   >
                     Simpan Jadwal
                   </UButton>
@@ -1258,7 +1306,7 @@ const toast = useToast()
 
             <div class="grid md:grid-cols-3 gap-6">
               <UCard
-                class="bg-linear-to-br from-blue-50 to-indigo-50 border-blue-200"
+                class="bg-linear-to-br from-blue-50 to-indigo-50 border-blue-200 dark:from-blue-900/30 dark:to-indigo-900/30 dark:border-blue-700"
               >
                 <div class="text-center">
                   <UIcon
@@ -1279,7 +1327,7 @@ const toast = useToast()
               </UCard>
 
               <UCard
-                class="bg-linear-to-br from-green-50 to-emerald-50 border-green-200"
+                class="bg-linear-to-br from-green-50 to-emerald-50 border-green-200 dark:from-green-900/30 dark:to-emerald-900/30 dark:border-green-700"
               >
                 <div class="text-center">
                   <UIcon
@@ -1300,7 +1348,7 @@ const toast = useToast()
               </UCard>
 
               <UCard
-                class="bg-linear-to-br from-purple-50 to-pink-50 border-purple-200"
+                class="bg-linear-to-br from-purple-50 to-pink-50 border-purple-200 dark:from-purple-900/30 dark:to-pink-900/30 dark:border-purple-700"
               >
                 <div class="text-center">
                   <UIcon

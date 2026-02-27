@@ -376,7 +376,7 @@ const goBack = () => {
 
 <template>
   <div
-    class="min-h-screen bg-linear-to-br from-slate-50 to-blue-50 p-6 space-y-6"
+    class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 space-y-6 transition-colors duration-300"
   >
     <!-- Header Progress -->
 
@@ -393,10 +393,10 @@ const goBack = () => {
           1
         </div>
         <div class="hidden sm:block">
-          <p class="text-sm font-medium text-gray-500">
+          <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
             Fase 1
           </p>
-          <p class="font-semibold text-gray-900">
+          <p class="font-semibold text-gray-900 dark:text-gray-100">
             Mutasi IRNA → OK
           </p>
         </div>
@@ -421,10 +421,10 @@ const goBack = () => {
           2
         </div>
         <div class="hidden sm:block text-right">
-          <p class="text-sm font-medium text-gray-500">
+          <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
             Fase 2
           </p>
-          <p class="font-semibold text-gray-900">
+          <p class="font-semibold text-gray-900 dark:text-gray-100">
             Timbang Terima
           </p>
         </div>
@@ -437,37 +437,58 @@ const goBack = () => {
       class="space-y-6 animate-fade-in"
     >
       <!-- Patient Info Card -->
-      <UCard class="rounded-2xl shadow-lg border-0 overflow-hidden">
+      <UCard
+        class="relative rounded-2xl shadow-lg border-0 overflow-hidden bg-white dark:bg-slate-900"
+      >
+        <!-- Top Accent Bar -->
         <div
-          class="absolute top-0 left-0 w-full h-1 bg-linear-to-rrom-blue-500 to-cyan-400"
+          class="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-blue-500 to-cyan-400"
         />
+
         <div
           class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
         >
+          <!-- LEFT SIDE -->
           <div class="flex items-start gap-4">
+            <!-- Icon Box -->
             <div
-              class="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center text-2xl"
+              class="w-16 h-16 rounded-2xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-2xl"
             >
               🏥
             </div>
+
             <div>
-              <h1 class="text-2xl font-bold text-gray-900 mb-1">
+              <h1
+                class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1"
+              >
                 {{ patientData.name }}
               </h1>
+
               <div
-                class="flex flex-wrap items-center gap-2 text-sm text-gray-600"
+                class="flex flex-wrap items-center gap-2 text-sm text-gray-600 dark:text-gray-300"
               >
-                <span class="px-2 py-1 bg-gray-100 rounded-md font-mono">{{
-                  patientData.mrn
-                }}</span>
+                <span
+                  class="px-2 py-1 bg-gray-100 dark:bg-slate-800 rounded-md font-mono"
+                >
+                  {{ patientData.mrn }}
+                </span>
+
                 <span>•</span>
-                <span>{{ patientData.age }} th, {{ patientData.gender }}</span>
+
+                <span>
+                  {{ patientData.age }} th, {{ patientData.gender }}
+                </span>
+
                 <span>•</span>
-                <span class="text-blue-600 font-medium">{{
-                  patientData.procedure
-                }}</span>
+
+                <span class="text-blue-600 dark:text-blue-400 font-medium">
+                  {{ patientData.procedure }}
+                </span>
               </div>
-              <div class="mt-2 flex items-center gap-4 text-xs text-gray-500">
+
+              <div
+                class="mt-2 flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400"
+              >
                 <span class="flex items-center gap-1">
                   <UIcon
                     name="i-heroicons-user-circle"
@@ -475,6 +496,7 @@ const goBack = () => {
                   />
                   {{ patientData.surgeon }}
                 </span>
+
                 <span class="flex items-center gap-1">
                   <UIcon
                     name="i-heroicons-heart"
@@ -485,9 +507,11 @@ const goBack = () => {
               </div>
             </div>
           </div>
+
+          <!-- RIGHT SIDE -->
           <div class="text-right space-y-2">
             <div
-              class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-sm font-medium"
+              class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium"
             >
               <UIcon
                 name="i-heroicons-map-pin"
@@ -495,8 +519,9 @@ const goBack = () => {
               />
               {{ patientData.roomFrom }}
             </div>
-            <div class="text-sm text-gray-500">
-              <p class="font-medium text-gray-900">
+
+            <div class="text-sm text-gray-500 dark:text-gray-400">
+              <p class="font-medium text-gray-900 dark:text-gray-100">
                 {{ patientData.date }}
               </p>
               <p>Mulai: {{ patientData.timeIn }}</p>
@@ -509,18 +534,27 @@ const goBack = () => {
       </UCard>
 
       <!-- Progress Bar -->
-      <div class="bg-white rounded-2xl p-4 shadow-sm flex items-center gap-4">
+      <div
+        class="bg-white dark:bg-slate-900 rounded-2xl p-4 shadow-sm flex items-center gap-4 transition-colors duration-300"
+      >
         <div class="flex-1">
           <div class="flex justify-between text-sm mb-2">
-            <span class="font-medium text-gray-700">Progress Kelengkapan (Wajib)</span>
-            <span class="font-bold text-blue-600">{{ progressMutasi }}%</span>
+            <span class="font-medium text-gray-700 dark:text-gray-300">
+              Progress Kelengkapan (Wajib)
+            </span>
+
+            <span class="font-bold text-blue-600 dark:text-blue-400">
+              {{ progressMutasi }}%
+            </span>
           </div>
+
           <UProgress
             :value="progressMutasi"
             color="primary"
             size="lg"
           />
         </div>
+
         <UBadge
           :color="
             patientData.status === 'Terverifikasi' ? 'success' : 'warning'
@@ -534,27 +568,32 @@ const goBack = () => {
       </div>
 
       <!-- Checklist Mutasi -->
-      <UCard class="rounded-2xl shadow-lg border-0">
+      <UCard
+        class="rounded-2xl shadow-lg border-0 bg-white dark:bg-slate-900 transition-colors duration-300"
+      >
+        <!-- HEADER -->
         <template #header>
           <div class="flex items-center justify-between py-2">
             <div class="flex items-center gap-3">
               <div
-                class="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center"
+                class="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center"
               >
                 <UIcon
                   name="i-heroicons-clipboard-document-check"
-                  class="w-5 h-5 text-indigo-600"
+                  class="w-5 h-5 text-indigo-600 dark:text-indigo-400"
                 />
               </div>
+
               <div>
-                <h2 class="text-lg font-bold text-gray-900">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100">
                   Checklist Mutasi IRNA → OK
                 </h2>
-                <p class="text-sm text-gray-500">
+                <p class="text-sm text-gray-500 dark:text-gray-400">
                   Tahap T1-T2: Verifikasi kelengkapan pra-operasi
                 </p>
               </div>
             </div>
+
             <UButton
               variant="ghost"
               color="neutral"
@@ -566,17 +605,19 @@ const goBack = () => {
           </div>
         </template>
 
+        <!-- BODY -->
         <div class="space-y-6">
-          <!-- Group by Category -->
           <div
             v-for="category in ['Dokumen', 'Persiapan', 'Medis']"
             :key="category"
             class="space-y-3"
           >
             <h3
-              class="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2"
+              class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider flex items-center gap-2"
             >
-              <span class="w-2 h-2 rounded-full bg-gray-300" />
+              <span
+                class="w-2 h-2 rounded-full bg-gray-300 dark:bg-slate-600"
+              />
               {{ category }}
             </h3>
 
@@ -589,8 +630,9 @@ const goBack = () => {
                 class="group flex items-start gap-3 p-3 rounded-xl border-2 transition-all duration-200 cursor-pointer hover:shadow-md"
                 :class="[
                   item.checked
-                    ? 'bg-emerald-50/50 border-emerald-200'
-                    : 'bg-white border-gray-100 hover:border-blue-200',
+                    ? 'bg-emerald-50/50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-700'
+                    : 'bg-white dark:bg-slate-800 border-gray-100 dark:border-slate-700 hover:border-blue-200 dark:hover:border-blue-600',
+
                   item.requierror && !item.checked
                     ? 'border-l-4 border-l-amber-400'
                     : ''
@@ -602,7 +644,7 @@ const goBack = () => {
                   :class="
                     item.checked
                       ? 'bg-emerald-500 scale-110'
-                      : 'bg-gray-200 group-hover:bg-blue-200'
+                      : 'bg-gray-200 dark:bg-slate-600 group-hover:bg-blue-200 dark:group-hover:bg-blue-700'
                   "
                 >
                   <UIcon
@@ -618,12 +660,13 @@ const goBack = () => {
                       class="text-sm font-medium transition-colors"
                       :class="
                         item.checked
-                          ? 'text-emerald-800 line-through opacity-70'
-                          : 'text-gray-700'
+                          ? 'text-emerald-800 dark:text-emerald-300 line-through opacity-70'
+                          : 'text-gray-700 dark:text-gray-300'
                       "
                     >
                       {{ item.label }}
                     </span>
+
                     <UBadge
                       v-if="item.requierror"
                       color="warning"
@@ -640,7 +683,7 @@ const goBack = () => {
           </div>
         </div>
 
-        <!-- Action Footer -->
+        <!-- FOOTER -->
         <template #footer>
           <div class="flex justify-end gap-3 py-2">
             <UButton
@@ -651,10 +694,11 @@ const goBack = () => {
             >
               Reset Checklist
             </UButton>
+
             <UButton
               color="primary"
               size="lg"
-              class="gap-2 shadow-lg shadow-blue-200"
+              class="gap-2 shadow-lg shadow-blue-200 dark:shadow-blue-900/40"
               :disabled="!allMutasiChecked"
               @click="completeMutasi"
             >
@@ -670,23 +714,23 @@ const goBack = () => {
 
       <!-- Logistics Status -->
       <UCard
-        class="rounded-2xl shadow-lg border-0 bg-linear-to-br from-white to-gray-50"
+        class="rounded-2xl shadow-lg border border-gray-800 bg-linear-to-br from-gray-900 to-gray-800"
       >
         <template #header>
           <div class="flex items-center gap-3 py-2">
             <div
-              class="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center"
+              class="w-10 h-10 rounded-xl bg-purple-900/40 flex items-center justify-center"
             >
               <UIcon
                 name="i-heroicons-cube-transparent"
-                class="w-5 h-5 text-purple-600"
+                class="w-5 h-5 text-purple-400"
               />
             </div>
             <div>
-              <h2 class="text-lg font-bold text-gray-900">
+              <h2 class="text-lg font-bold text-gray-100">
                 Status Logistik & Ketersediaan
               </h2>
-              <p class="text-sm text-gray-500">
+              <p class="text-sm text-gray-400">
                 Monitoring ketersediaan sumber daya
               </p>
             </div>
@@ -697,19 +741,19 @@ const goBack = () => {
           <div
             v-for="item in logistics"
             :key="item.id"
-            class="flex items-center gap-4 p-4 rounded-xl border transition-all duration-200 hover:shadow-md"
+            class="flex items-center gap-4 p-4 rounded-xl border transition-all duration-200 hover:shadow-lg"
             :class="
               item.status === 'available'
-                ? 'bg-emerald-50/30 border-emerald-100'
-                : 'bg-amber-50/30 border-amber-100'
+                ? 'bg-emerald-900/20 border-emerald-700/40'
+                : 'bg-amber-900/20 border-amber-700/40'
             "
           >
             <div
               class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
               :class="
                 item.color === 'emerald'
-                  ? 'bg-emerald-100 text-emerald-600'
-                  : 'bg-amber-100 text-amber-600'
+                  ? 'bg-emerald-800/40 text-emerald-400'
+                  : 'bg-amber-800/40 text-amber-400'
               "
             >
               <UIcon
@@ -717,9 +761,10 @@ const goBack = () => {
                 class="w-6 h-6"
               />
             </div>
+
             <div class="flex-1">
               <div class="flex items-center justify-between mb-1">
-                <h3 class="font-semibold text-gray-900">
+                <h3 class="font-semibold text-gray-100">
                   {{ item.title }}
                 </h3>
                 <UIcon
@@ -730,13 +775,13 @@ const goBack = () => {
                   "
                   :class="
                     item.color === 'emerald'
-                      ? 'text-emerald-500'
-                      : 'text-amber-500'
+                      ? 'text-emerald-400'
+                      : 'text-amber-400'
                   "
                   class="w-5 h-5"
                 />
               </div>
-              <p class="text-sm text-gray-600">
+              <p class="text-sm text-gray-400">
                 {{ item.description }}
               </p>
             </div>
@@ -744,13 +789,13 @@ const goBack = () => {
         </div>
 
         <div
-          class="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-100 flex items-start gap-3"
+          class="mt-6 p-4 bg-blue-900/20 rounded-xl border border-blue-800/40 flex items-start gap-3"
         >
           <UIcon
             name="i-heroicons-information-circle"
-            class="w-5 h-5 text-blue-600 shrink-0 mt-0.5"
+            class="w-5 h-5 text-blue-400 shrink-0 mt-0.5"
           />
-          <div class="text-sm text-blue-800">
+          <div class="text-sm text-blue-200">
             <p class="font-semibold mb-1">
               Catatan Penting:
             </p>
