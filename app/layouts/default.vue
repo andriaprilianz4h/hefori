@@ -41,7 +41,7 @@ onUnmounted(() => {
 
       <main
         ref="mainRef"
-        class="flex-1 overflow-auto px-6 py-6 bg-slate-50 dark:bg-slate-950 scroll-smooth min-h-0"
+        class="flex-1 overflow-auto px-3 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-6 bg-slate-50 dark:bg-slate-950 scroll-smooth min-h-0"
       >
         <div class="w-full h-full">
           <slot />
@@ -63,7 +63,7 @@ onUnmounted(() => {
     >
       <button
         v-if="showButton"
-        class="fixed bottom-8 right-8 z-50 group"
+        class="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50 group"
         @click="scrollToTop"
       >
         <div
@@ -73,11 +73,11 @@ onUnmounted(() => {
           class="absolute inset-0 bg-primary-400/20 rounded-full blur-lg scale-150 group-hover:scale-175 transition-transform duration-500"
         />
         <div
-          class="relative w-14 h-14 rounded-2xl bg-linear-to-br from-primary-500 to-primary-600 dark:from-primary-400 dark:to-primary-600 text-white shadow-2xl shadow-primary-500/30 dark:shadow-primary-500/20 flex items-center justify-center transform group-hover:scale-110 group-hover:-translate-y-1 transition-all duration-300 hover:shadow-primary-500/50"
+          class="relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-linear-to-br from-primary-500 to-primary-600 dark:from-primary-400 dark:to-primary-600 text-white shadow-2xl shadow-primary-500/30 dark:shadow-primary-500/20 flex items-center justify-center transform group-hover:scale-110 group-hover:-translate-y-1 transition-all duration-300 hover:shadow-primary-500/50"
         >
           <Icon
             name="heroicons:arrow-up-20-solid"
-            class="w-6 h-6 transform group-hover:-translate-y-0.5 transition-transform duration-300"
+            class="w-5 h-5 sm:w-6 sm:h-6 transform group-hover:-translate-y-0.5 transition-transform duration-300"
           />
           <div
             class="absolute inset-0 rounded-2xl bg-linear-to-tr from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"

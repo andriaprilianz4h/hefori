@@ -5,6 +5,7 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
+    "host": "nuxt dev --host",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
@@ -30,6 +31,7 @@
     "vue3-apexcharts": "^1.10.0"
   },
   "devDependencies": {
+    "@iconify-json/heroicons": "^1.2.3",
     "@nuxt/eslint": "^1.13.0",
     "eslint": "^9.39.2",
     "typescript": "^5.9.3",

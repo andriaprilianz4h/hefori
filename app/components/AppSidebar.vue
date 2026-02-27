@@ -108,7 +108,7 @@ function toggleSidebar() {
       <!-- Header dengan Gradient -->
       <div
         :class="[
-          'h-20 flex items-center px-5 border-b border-gray-200/50 dark:border-slate-700/50',
+          'h-16 flex items-center px-5 border-b border-gray-200/50 dark:border-slate-700/50',
           isCollapsed ? 'lg:justify-center' : 'justify-between'
         ]"
       >
@@ -125,10 +125,11 @@ function toggleSidebar() {
             <div
               class="relative w-10 h-10 rounded-xl bg-linear-to-brrom-green-400 to-emerald-600 flex items-center justify-center text-white font-bold shadow-lg"
             >
-              <UIcon
-                name="heroicons:heart"
-                class="w-6 h-6"
-              />
+              <img
+                src="/logo.png"
+                alt="Logo"
+                class="w-12 h-12 object-contain"
+              >
             </div>
           </div>
           <div>
@@ -137,11 +138,6 @@ function toggleSidebar() {
             >
               OPTI<span class="text-green-500">MUM</span>
             </h1>
-            <p
-              class="text-[10px] text-gray-400 dark:text-slate-500 font-medium tracking-wider uppercase"
-            >
-              Sistem Bedah Sentral
-            </p>
           </div>
         </div>
 

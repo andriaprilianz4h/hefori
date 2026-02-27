@@ -8,7 +8,7 @@ const stats = [
 
 <template>
   <div
-    class="hidden lg:flex lg:w-1/2 bg-linear-to-br from-primary-600 via-primary-700 to-primary-800 relative overflow-hidden"
+    class="hidden lg:flex lg:w-1/2 bg-linear-to-br from-primary-500 via-primary-700 to-primary-800 relative overflow-hidden"
   >
     <!-- Dot Pattern -->
     <div class="absolute inset-0 opacity-10">
@@ -30,10 +30,11 @@ const stats = [
         <div
           class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center"
         >
-          <UIcon
-            name="i-lucide-activity-square"
-            class="w-8 h-8 text-white"
-          />
+          <img
+            src="/logo.png"
+            alt="Logo"
+            class="w-32 h-32 object-contain"
+          >
         </div>
         <div>
           <h1 class="text-3xl font-bold">

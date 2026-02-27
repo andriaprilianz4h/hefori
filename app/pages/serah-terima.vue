@@ -30,105 +30,105 @@ const mutasiChecklist = ref([
     category: 'Dokumen',
     label: 'Informed Consent Operasi telah ditandatangani',
     checked: false,
-    requierror: true
+    required: true
   },
   {
     id: 2,
     category: 'Dokumen',
     label: 'Informed Consent Anestesi telah ditandatangani',
     checked: false,
-    requierror: true
+    required: true
   },
   {
     id: 3,
     category: 'Dokumen',
     label: 'Asesmen Pra-Bedah lengkap dan terbaru',
     checked: false,
-    requierror: true
+    required: true
   },
   {
     id: 4,
     category: 'Dokumen',
     label: 'Digital Marker Site terverifikasi (Tandai Lokasi Operasi)',
     checked: false,
-    requierror: true
+    required: true
   },
   {
     id: 5,
     category: 'Dokumen',
     label: 'Hasil Laboratorium (≤ 7 hari untuk elektif)',
     checked: false,
-    requierror: true
+    required: true
   },
   {
     id: 6,
     category: 'Dokumen',
     label: 'Hasil Imaging (Rontgen/CT/MRI) tersedia',
     checked: false,
-    requierror: true
+    required: true
   },
   {
     id: 7,
     category: 'Dokumen',
     label: 'EKG (untuk pasien > 40 th atau riwayat jantung)',
     checked: false,
-    requierror: false
+    required: false
   },
   {
     id: 8,
     category: 'Persiapan',
     label: 'Puasa minimal 6-8 jam (solid & cairan jernih)',
     checked: false,
-    requierror: true
+    required: true
   },
   {
     id: 9,
     category: 'Persiapan',
     label: 'Cukur & pencucian area operasi (jika diperlukan)',
     checked: false,
-    requierror: false
+    required: false
   },
   {
     id: 10,
     category: 'Persiapan',
     label: 'Gelang identitas pasien terpasang & terbaca',
     checked: false,
-    requierror: true
+    required: true
   },
   {
     id: 11,
     category: 'Persiapan',
     label: 'Prothesa/gigi palsu/alat bantu dilepas',
     checked: false,
-    requierror: true
+    required: true
   },
   {
     id: 12,
     category: 'Persiapan',
     label: 'Perhiasan & benda berharga telah diamankan',
     checked: false,
-    requierror: true
+    required: true
   },
   {
     id: 13,
     category: 'Medis',
     label: 'Cairan infus terpasang (access IV paten)',
     checked: false,
-    requierror: true
+    required: true
   },
   {
     id: 14,
     category: 'Medis',
     label: 'Premedikasi diberikan (jika diindikasikan)',
     checked: false,
-    requierror: false
+    required: false
   },
   {
     id: 15,
     category: 'Medis',
     label: 'Riwayat alergi telah dikonfirmasi',
     checked: false,
-    requierror: true
+    required: true
   }
 ])
 
@@ -307,7 +307,7 @@ const patientBelongings = ref([
 // ==================== COMPUTED & METHODS ====================
 const allMutasiChecked = computed(() => {
   return mutasiChecklist.value
-    .filter(item => item.requierror)
+    .filter(item => item.required)
     .every(item => item.checked)
 })
 
@@ -318,11 +318,11 @@ const allTimbangTerimaChecked = computed(() => {
 })
 
 const progressMutasi = computed(() => {
-  const requierror = mutasiChecklist.value.filter(i => i.requierror).length
+  const required = mutasiChecklist.value.filter(i => i.required).length
   const checked = mutasiChecklist.value.filter(
-    i => i.requierror && i.checked
+    i => i.required && i.checked
   ).length
-  return Math.round((checked / requierror) * 100)
+  return Math.round((checked / required) * 100)
 })
 
 const progressTimbangTerima = computed(() => {
@@ -379,14 +379,13 @@ const goBack = () => {
     class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 space-y-6 transition-colors duration-300"
   >
     <!-- Header Progress -->
-
     <div class="flex items-center justify-between mb-8">
       <div class="flex items-center gap-4">
         <div
           class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-300"
           :class="
             currentPhase === 'mutasi'
-              ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
+              ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 dark:shadow-blue-900/40'
               : 'bg-emerald-500 text-white'
           "
         >
@@ -402,7 +401,9 @@ const goBack = () => {
         </div>
       </div>
 
-      <div class="flex-1 mx-4 h-2 bg-gray-200 rounded-full overflow-hidden">
+      <div
+        class="flex-1 mx-4 h-2 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden"
+      >
         <div
           class="h-full bg-linear-to-r from-blue-500 to-emerald-500 transition-all duration-500"
           :style="{ width: currentPhase === 'mutasi' ? '50%' : '100%' }"
@@ -414,8 +415,8 @@ const goBack = () => {
           class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-300"
           :class="
             currentPhase === 'timbang_terima'
-              ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
-              : 'bg-gray-300 text-gray-500'
+              ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 dark:shadow-blue-900/40'
+              : 'bg-gray-300 dark:bg-slate-700 text-gray-500 dark:text-gray-400'
           "
         >
           2
@@ -438,7 +439,7 @@ const goBack = () => {
     >
       <!-- Patient Info Card -->
       <UCard
-        class="relative rounded-2xl shadow-lg border-0 overflow-hidden bg-white dark:bg-slate-900"
+        class="relative rounded-2xl shadow-lg border-0 overflow-hidden bg-white dark:bg-slate-800"
       >
         <!-- Top Accent Bar -->
         <div
@@ -468,18 +469,16 @@ const goBack = () => {
                 class="flex flex-wrap items-center gap-2 text-sm text-gray-600 dark:text-gray-300"
               >
                 <span
-                  class="px-2 py-1 bg-gray-100 dark:bg-slate-800 rounded-md font-mono"
+                  class="px-2 py-1 bg-gray-100 dark:bg-slate-700 rounded-md font-mono text-gray-700 dark:text-gray-300"
                 >
                   {{ patientData.mrn }}
                 </span>
 
-                <span>•</span>
+                <span class="text-gray-400">•</span>
 
-                <span>
-                  {{ patientData.age }} th, {{ patientData.gender }}
-                </span>
+                <span class="dark:text-gray-300">{{ patientData.age }} th, {{ patientData.gender }}</span>
 
-                <span>•</span>
+                <span class="text-gray-400">•</span>
 
                 <span class="text-blue-600 dark:text-blue-400 font-medium">
                   {{ patientData.procedure }}
@@ -535,17 +534,12 @@ const goBack = () => {
 
       <!-- Progress Bar -->
       <div
-        class="bg-white dark:bg-slate-900 rounded-2xl p-4 shadow-sm flex items-center gap-4 transition-colors duration-300"
+        class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm flex items-center gap-4 transition-colors duration-300"
       >
         <div class="flex-1">
           <div class="flex justify-between text-sm mb-2">
-            <span class="font-medium text-gray-700 dark:text-gray-300">
-              Progress Kelengkapan (Wajib)
-            </span>
-
-            <span class="font-bold text-blue-600 dark:text-blue-400">
-              {{ progressMutasi }}%
-            </span>
+            <span class="font-medium text-gray-700 dark:text-gray-300">Progress Kelengkapan (Wajib)</span>
+            <span class="font-bold text-blue-600 dark:text-blue-400">{{ progressMutasi }}%</span>
           </div>
 
           <UProgress
@@ -569,7 +563,7 @@ const goBack = () => {
 
       <!-- Checklist Mutasi -->
       <UCard
-        class="rounded-2xl shadow-lg border-0 bg-white dark:bg-slate-900 transition-colors duration-300"
+        class="rounded-2xl shadow-lg border-0 bg-white dark:bg-slate-800 transition-colors duration-300"
       >
         <!-- HEADER -->
         <template #header>
@@ -631,10 +625,9 @@ const goBack = () => {
                 :class="[
                   item.checked
                     ? 'bg-emerald-50/50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-700'
-                    : 'bg-white dark:bg-slate-800 border-gray-100 dark:border-slate-700 hover:border-blue-200 dark:hover:border-blue-600',
-
-                  item.requierror && !item.checked
-                    ? 'border-l-4 border-l-amber-400'
+                    : 'bg-white dark:bg-slate-700 border-gray-100 dark:border-slate-600 hover:border-blue-200 dark:hover:border-blue-600',
+                  item.required && !item.checked
+                    ? 'border-l-4 border-l-amber-400 dark:border-l-amber-500'
                     : ''
                 ]"
                 @click="item.checked = !item.checked"
@@ -668,7 +661,7 @@ const goBack = () => {
                     </span>
 
                     <UBadge
-                      v-if="item.requierror"
+                      v-if="item.required"
                       color="warning"
                       variant="soft"
                       size="xs"
@@ -714,23 +707,23 @@ const goBack = () => {
 
       <!-- Logistics Status -->
       <UCard
-        class="rounded-2xl shadow-lg border border-gray-800 bg-linear-to-br from-gray-900 to-gray-800"
+        class="rounded-2xl shadow-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 transition-colors duration-300"
       >
         <template #header>
           <div class="flex items-center gap-3 py-2">
             <div
-              class="w-10 h-10 rounded-xl bg-purple-900/40 flex items-center justify-center"
+              class="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center"
             >
               <UIcon
                 name="i-heroicons-cube-transparent"
-                class="w-5 h-5 text-purple-400"
+                class="w-5 h-5 text-purple-600 dark:text-purple-400"
               />
             </div>
             <div>
-              <h2 class="text-lg font-bold text-gray-100">
+              <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100">
                 Status Logistik & Ketersediaan
               </h2>
-              <p class="text-sm text-gray-400">
+              <p class="text-sm text-gray-500 dark:text-gray-400">
                 Monitoring ketersediaan sumber daya
               </p>
             </div>
@@ -744,16 +737,16 @@ const goBack = () => {
             class="flex items-center gap-4 p-4 rounded-xl border transition-all duration-200 hover:shadow-lg"
             :class="
               item.status === 'available'
-                ? 'bg-emerald-900/20 border-emerald-700/40'
-                : 'bg-amber-900/20 border-amber-700/40'
+                ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800'
+                : 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800'
             "
           >
             <div
               class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
               :class="
                 item.color === 'emerald'
-                  ? 'bg-emerald-800/40 text-emerald-400'
-                  : 'bg-amber-800/40 text-amber-400'
+                  ? 'bg-emerald-100 dark:bg-emerald-800/40 text-emerald-600 dark:text-emerald-400'
+                  : 'bg-amber-100 dark:bg-amber-800/40 text-amber-600 dark:text-amber-400'
               "
             >
               <UIcon
@@ -764,7 +757,7 @@ const goBack = () => {
 
             <div class="flex-1">
               <div class="flex items-center justify-between mb-1">
-                <h3 class="font-semibold text-gray-100">
+                <h3 class="font-semibold text-gray-900 dark:text-gray-100">
                   {{ item.title }}
                 </h3>
                 <UIcon
@@ -775,13 +768,13 @@ const goBack = () => {
                   "
                   :class="
                     item.color === 'emerald'
-                      ? 'text-emerald-400'
-                      : 'text-amber-400'
+                      ? 'text-emerald-600 dark:text-emerald-400'
+                      : 'text-amber-600 dark:text-amber-400'
                   "
                   class="w-5 h-5"
                 />
               </div>
-              <p class="text-sm text-gray-400">
+              <p class="text-sm text-gray-600 dark:text-gray-400">
                 {{ item.description }}
               </p>
             </div>
@@ -789,13 +782,13 @@ const goBack = () => {
         </div>
 
         <div
-          class="mt-6 p-4 bg-blue-900/20 rounded-xl border border-blue-800/40 flex items-start gap-3"
+          class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800/40 flex items-start gap-3"
         >
           <UIcon
             name="i-heroicons-information-circle"
-            class="w-5 h-5 text-blue-400 shrink-0 mt-0.5"
+            class="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5"
           />
-          <div class="text-sm text-blue-200">
+          <div class="text-sm text-blue-800 dark:text-blue-200">
             <p class="font-semibold mb-1">
               Catatan Penting:
             </p>
@@ -816,7 +809,7 @@ const goBack = () => {
     >
       <!-- Handover Header -->
       <UCard
-        class="rounded-2xl shadow-lg border-0 overflow-hidden bg-linear-to-rrom-emerald-50 to-teal-50"
+        class="rounded-2xl shadow-lg border-0 overflow-hidden bg-linear-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20"
       >
         <div
           class="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-emerald-500 to-teal-400"
@@ -833,12 +826,14 @@ const goBack = () => {
               >
                 Fase 2
               </UBadge>
-              <span class="text-sm text-emerald-700 font-medium">Timbang Terima Perawat</span>
+              <span
+                class="text-sm text-emerald-700 dark:text-emerald-300 font-medium"
+              >Timbang Terima Perawat</span>
             </div>
-            <h1 class="text-2xl font-bold text-gray-900">
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
               Serah Terima Tanggung Jawab Pasien
             </h1>
-            <p class="text-gray-600 mt-1">
+            <p class="text-gray-600 dark:text-gray-400 mt-1">
               Dari Ruang Rawat Inap ke Instalasi Bedah Sentral
             </p>
           </div>
@@ -860,35 +855,37 @@ const goBack = () => {
       <div class="grid md:grid-cols-2 gap-6">
         <!-- Pengirim -->
         <UCard
-          class="rounded-2xl shadow-md border-2 border-dashed border-gray-200 hover:border-blue-300 transition-colors"
+          class="rounded-2xl shadow-md border-2 border-dashed border-gray-200 dark:border-slate-600 hover:border-blue-300 dark:hover:border-blue-500 transition-colors bg-white dark:bg-slate-800"
         >
           <div class="flex items-center gap-4 mb-4">
             <div
-              class="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center"
+              class="w-14 h-14 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center"
             >
               <UIcon
                 name="i-heroicons-arrow-up-circle"
-                class="w-7 h-7 text-blue-600"
+                class="w-7 h-7 text-blue-600 dark:text-blue-400"
               />
             </div>
             <div>
               <p
-                class="text-xs font-bold text-gray-400 uppercase tracking-wider"
+                class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider"
               >
                 Perawat Pengirim
               </p>
-              <h3 class="font-bold text-gray-900">
+              <h3 class="font-bold text-gray-900 dark:text-gray-100">
                 {{ handoverData.perawatPengirim }}
               </h3>
-              <p class="text-sm text-gray-500">
+              <p class="text-sm text-gray-500 dark:text-gray-400">
                 {{ handoverData.ruanganPengirim }}
               </p>
             </div>
           </div>
           <div class="space-y-2 text-sm">
-            <div class="flex justify-between py-2 border-b border-gray-100">
-              <span class="text-gray-500">Waktu Serah</span>
-              <span class="font-medium text-gray-900">{{
+            <div
+              class="flex justify-between py-2 border-b border-gray-100 dark:border-slate-700"
+            >
+              <span class="text-gray-500 dark:text-gray-400">Waktu Serah</span>
+              <span class="font-medium text-gray-900 dark:text-gray-100">{{
                 handoverData.waktuSerahTerima || "-"
               }}</span>
             </div>
@@ -897,34 +894,36 @@ const goBack = () => {
 
         <!-- Penerima -->
         <UCard
-          class="rounded-2xl shadow-md border-2 border-dashed border-gray-200 hover:border-emerald-300 transition-colors"
+          class="rounded-2xl shadow-md border-2 border-dashed border-gray-200 dark:border-slate-600 hover:border-emerald-300 dark:hover:border-emerald-500 transition-colors bg-white dark:bg-slate-800"
         >
           <div class="flex items-center gap-4 mb-4">
             <div
-              class="w-14 h-14 rounded-full bg-emerald-100 flex items-center justify-center"
+              class="w-14 h-14 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center"
             >
               <UIcon
                 name="i-heroicons-arrow-down-circle"
-                class="w-7 h-7 text-emerald-600"
+                class="w-7 h-7 text-emerald-600 dark:text-emerald-400"
               />
             </div>
             <div>
               <p
-                class="text-xs font-bold text-gray-400 uppercase tracking-wider"
+                class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider"
               >
                 Perawat Penerima (OK)
               </p>
-              <h3 class="font-bold text-gray-900">
+              <h3 class="font-bold text-gray-900 dark:text-gray-100">
                 {{ handoverData.perawatPenerima }}
               </h3>
-              <p class="text-sm text-gray-500">
+              <p class="text-sm text-gray-500 dark:text-gray-400">
                 {{ handoverData.ruanganPenerima }}
               </p>
             </div>
           </div>
           <div class="space-y-2 text-sm">
-            <div class="flex justify-between py-2 border-b border-gray-100">
-              <span class="text-gray-500">Status</span>
+            <div
+              class="flex justify-between py-2 border-b border-gray-100 dark:border-slate-700"
+            >
+              <span class="text-gray-500 dark:text-gray-400">Status</span>
               <UBadge
                 color="warning"
                 variant="soft"
@@ -938,11 +937,13 @@ const goBack = () => {
       </div>
 
       <!-- Progress -->
-      <div class="bg-white rounded-2xl p-4 shadow-sm flex items-center gap-4">
+      <div
+        class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm flex items-center gap-4 transition-colors duration-300"
+      >
         <div class="flex-1">
           <div class="flex justify-between text-sm mb-2">
-            <span class="font-medium text-gray-700">Progress SBAR (Kritis)</span>
-            <span class="font-bold text-emerald-600">{{ progressTimbangTerima }}%</span>
+            <span class="font-medium text-gray-700 dark:text-gray-300">Progress SBAR (Kritis)</span>
+            <span class="font-bold text-emerald-600 dark:text-emerald-400">{{ progressTimbangTerima }}%</span>
           </div>
           <UProgress
             :value="progressTimbangTerima"
@@ -953,23 +954,25 @@ const goBack = () => {
       </div>
 
       <!-- SBAR Checklist -->
-      <UCard class="rounded-2xl shadow-lg border-0">
+      <UCard
+        class="rounded-2xl shadow-lg border-0 bg-white dark:bg-slate-800 transition-colors duration-300"
+      >
         <template #header>
           <div class="flex items-center justify-between py-2">
             <div class="flex items-center gap-3">
               <div
-                class="w-10 h-10 rounded-xl bg-teal-100 flex items-center justify-center"
+                class="w-10 h-10 rounded-xl bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center"
               >
                 <UIcon
                   name="i-heroicons-chat-bubble-left-right"
-                  class="w-5 h-5 text-teal-600"
+                  class="w-5 h-5 text-teal-600 dark:text-teal-400"
                 />
               </div>
               <div>
-                <h2 class="text-lg font-bold text-gray-900">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100">
                   Komunikasi SBAR
                 </h2>
-                <p class="text-sm text-gray-500">
+                <p class="text-sm text-gray-500 dark:text-gray-400">
                   Situation - Background - Assessment - Recommendation
                 </p>
               </div>
@@ -992,16 +995,19 @@ const goBack = () => {
               <span
                 class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
                 :class="{
-                  'bg-error-100 text-error-700': category === 'Situation',
-                  'bg-orange-100 text-orange-700': category === 'Background',
-                  'bg-blue-100 text-blue-700': category === 'Assessment',
-                  'bg-purple-100 text-purple-700':
+                  'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300':
+                    category === 'Situation',
+                  'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300':
+                    category === 'Background',
+                  'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300':
+                    category === 'Assessment',
+                  'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300':
                     category === 'Recommendation'
                 }"
               >
                 {{ category }}
               </span>
-              <div class="flex-1 h-px bg-gray-200" />
+              <div class="flex-1 h-px bg-gray-200 dark:bg-slate-700" />
             </div>
 
             <div class="space-y-2 ml-4">
@@ -1013,9 +1019,11 @@ const goBack = () => {
                 class="group flex items-start gap-3 p-3 rounded-xl border-2 transition-all duration-200 cursor-pointer"
                 :class="[
                   item.checked
-                    ? 'bg-emerald-50 border-emerald-200'
-                    : 'bg-white border-gray-100 hover:border-gray-300',
-                  item.critical ? 'border-l-4 border-l-error-400' : ''
+                    ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-700'
+                    : 'bg-white dark:bg-slate-700 border-gray-100 dark:border-slate-600 hover:border-gray-300 dark:hover:border-gray-500',
+                  item.critical
+                    ? 'border-l-4 border-l-red-400 dark:border-l-red-500'
+                    : ''
                 ]"
                 @click="item.checked = !item.checked"
               >
@@ -1024,7 +1032,7 @@ const goBack = () => {
                   :class="
                     item.checked
                       ? 'bg-emerald-500 scale-110'
-                      : 'bg-gray-200 group-hover:bg-gray-300'
+                      : 'bg-gray-200 dark:bg-slate-600 group-hover:bg-gray-300 dark:group-hover:bg-slate-500'
                   "
                 >
                   <UIcon
@@ -1040,8 +1048,8 @@ const goBack = () => {
                       class="text-sm font-medium transition-colors"
                       :class="
                         item.checked
-                          ? 'text-emerald-800 line-through opacity-70'
-                          : 'text-gray-700'
+                          ? 'text-emerald-800 dark:text-emerald-300 line-through opacity-70'
+                          : 'text-gray-700 dark:text-gray-300'
                       "
                     >
                       {{ item.label }}
@@ -1063,63 +1071,77 @@ const goBack = () => {
       </UCard>
 
       <!-- Barang Bawaan -->
-      <UCard class="rounded-2xl shadow-lg border-0">
+      <UCard
+        class="rounded-2xl shadow-lg border-0 bg-white dark:bg-slate-800 transition-colors duration-300"
+      >
         <template #header>
           <div class="flex items-center gap-3 py-2">
             <div
-              class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center"
+              class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center"
             >
               <UIcon
                 name="i-heroicons-shopping-bag"
-                class="w-5 h-5 text-amber-600"
+                class="w-5 h-5 text-amber-600 dark:text-amber-400"
               />
             </div>
             <div>
-              <h2 class="text-lg font-bold text-gray-900">
+              <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100">
                 Barang Bawaan Pasien
               </h2>
-              <p class="text-sm text-gray-500">
+              <p class="text-sm text-gray-500 dark:text-gray-400">
                 Verifikasi barang yang ikut/meninggal di ruangan
               </p>
             </div>
           </div>
         </template>
 
-        <div class="overflow-hidden rounded-xl border border-gray-200">
+        <div
+          class="overflow-hidden rounded-xl border border-gray-200 dark:border-slate-700"
+        >
           <table class="w-full text-sm">
-            <thead class="bg-gray-50">
+            <thead class="bg-gray-50 dark:bg-slate-900/50">
               <tr>
-                <th class="px-4 py-3 text-left font-semibold text-gray-700">
+                <th
+                  class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                >
                   Item
                 </th>
                 <th
-                  class="px-4 py-3 text-center font-semibold text-gray-700 w-24"
+                  class="px-4 py-3 text-center font-semibold text-gray-700 dark:text-gray-300 w-24"
                 >
                   Jumlah
                 </th>
-                <th class="px-4 py-3 text-left font-semibold text-gray-700">
+                <th
+                  class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                >
                   Keterangan
                 </th>
                 <th
-                  class="px-4 py-3 text-center font-semibold text-gray-700 w-32"
+                  class="px-4 py-3 text-center font-semibold text-gray-700 dark:text-gray-300 w-32"
                 >
                   Status
                 </th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-gray-100">
+            <tbody
+              class="divide-y divide-gray-100 dark:divide-slate-700 bg-white dark:bg-slate-800"
+            >
               <tr
                 v-for="item in patientBelongings"
                 :key="item.id"
-                class="hover:bg-gray-50 transition-colors"
+                class="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors"
               >
-                <td class="px-4 py-3 font-medium text-gray-900">
+                <td
+                  class="px-4 py-3 font-medium text-gray-900 dark:text-gray-100"
+                >
                   {{ item.item }}
                 </td>
-                <td class="px-4 py-3 text-center text-gray-600">
+                <td
+                  class="px-4 py-3 text-center text-gray-600 dark:text-gray-400"
+                >
                   {{ item.jumlah }}
                 </td>
-                <td class="px-4 py-3 text-gray-600">
+                <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
                   {{ item.keterangan }}
                 </td>
                 <td class="px-4 py-3 text-center">
@@ -1139,25 +1161,25 @@ const goBack = () => {
 
       <!-- Final Actions -->
       <UCard
-        class="rounded-2xl shadow-lg border-0 bg-linear-to-r from-emerald-50 to-teal-50"
+        class="rounded-2xl shadow-lg border-0 bg-linear-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20"
       >
         <div
           class="flex flex-col md:flex-row justify-between items-center gap-4 p-2"
         >
           <div class="flex items-center gap-3">
             <div
-              class="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm"
+              class="w-12 h-12 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm"
             >
               <UIcon
                 name="i-heroicons-shield-check"
-                class="w-6 h-6 text-emerald-600"
+                class="w-6 h-6 text-emerald-600 dark:text-emerald-400"
               />
             </div>
             <div>
-              <h3 class="font-bold text-gray-900">
+              <h3 class="font-bold text-gray-900 dark:text-gray-100">
                 Siap untuk Operasi?
               </h3>
-              <p class="text-sm text-gray-600">
+              <p class="text-sm text-gray-600 dark:text-gray-400">
                 Pastikan semua checklist kritis telah diverifikasi
               </p>
             </div>
@@ -1174,7 +1196,7 @@ const goBack = () => {
             <UButton
               color="success"
               size="lg"
-              class="gap-2 shadow-lg shadow-success-200"
+              class="gap-2 shadow-lg shadow-emerald-200 dark:shadow-emerald-900/40"
               :disabled="!allTimbangTerimaChecked"
               @click="completeHandover"
             >

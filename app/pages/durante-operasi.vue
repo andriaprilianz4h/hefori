@@ -115,25 +115,27 @@ const editPembiusan = () => {
     class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 space-y-6 transition-colors duration-300"
   >
     <!-- Header Card -->
-    <div class="bg-success rounded-2xl p-6 text-white shadow-lg">
+    <div
+      class="bg-emerald-500 dark:bg-emerald-600 rounded-2xl p-6 text-white shadow-lg"
+    >
       <div class="flex justify-between items-start">
         <div>
           <h1 class="text-2xl font-bold mb-1">
             {{ patientData.name }}
           </h1>
-          <p class="text-white text-sm">
+          <p class="text-emerald-100 text-sm">
             MRN: {{ patientData.mrn }} • {{ patientData.procedure }}
           </p>
         </div>
         <div class="text-right">
-          <p class="text-white text-sm mb-1">
+          <p class="text-emerald-100 text-sm mb-1">
             Ruang
           </p>
           <p class="text-3xl text-white font-bold">
             {{ patientData.room }}
           </p>
           <span
-            class="inline-block mt-2 px-3 py-1 bg-white text-success rounded-full text-xs font-medium backdrop-blur-sm"
+            class="inline-block mt-2 px-3 py-1 bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 rounded-full text-xs font-medium backdrop-blur-sm"
           >
             {{ patientData.status }}
           </span>
@@ -143,7 +145,7 @@ const editPembiusan = () => {
 
     <!-- WHO Safety Checklist Section -->
     <div>
-      <h2 class="text-lg font-semibold text-slate-800 mb-4">
+      <h2 class="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4">
         WHO Safety Checklist
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -160,7 +162,7 @@ const editPembiusan = () => {
 
           <div v-if="!checklistStatus.signIn">
             <button
-              class="w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 bg-success text-white hover:bg-success-600 active:scale-95"
+              class="w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 bg-emerald-500 dark:bg-emerald-600 text-white hover:bg-emerald-600 dark:hover:bg-emerald-700 active:scale-95"
               @click="recordTime('signIn')"
             >
               <svg
@@ -184,11 +186,11 @@ const editPembiusan = () => {
             v-else
             class="flex items-center justify-between"
           >
-            <span class="text-lg font-medium text-success">{{
-              signInTime
-            }}</span>
+            <span
+              class="text-lg font-medium text-emerald-600 dark:text-emerald-400"
+            >{{ signInTime }}</span>
             <button
-              class="py-2.5 px-4 rounded-lg font-medium text-sm transition-all flex items-center gap-1.5 bg-warning text-white hover:bg-warning-600 active:scale-95"
+              class="py-2.5 px-4 rounded-lg font-medium text-sm transition-all flex items-center gap-1.5 bg-amber-500 dark:bg-amber-600 text-white hover:bg-amber-600 dark:hover:bg-amber-700 active:scale-95"
               @click="editTime('signIn')"
             >
               <svg
@@ -216,13 +218,13 @@ const editPembiusan = () => {
           <h3 class="font-semibold text-slate-800 dark:text-slate-100 mb-1">
             Time Out
           </h3>
-          <p class="text-sm text-slate-500 mb-4">
+          <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
             Konfirmasi tim & persiapan
           </p>
 
           <div v-if="!checklistStatus.timeOut">
             <button
-              class="w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 bg-success text-white hover:bg-success-600 active:scale-95"
+              class="w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 bg-emerald-500 dark:bg-emerald-600 text-white hover:bg-emerald-600 dark:hover:bg-emerald-700 active:scale-95"
               @click="recordTime('timeOut')"
             >
               <svg
@@ -246,11 +248,11 @@ const editPembiusan = () => {
             v-else
             class="flex items-center justify-between"
           >
-            <span class="text-lg font-medium text-success">{{
-              timeOutTime
-            }}</span>
+            <span
+              class="text-lg font-medium text-emerald-600 dark:text-emerald-400"
+            >{{ timeOutTime }}</span>
             <button
-              class="py-2.5 px-4 rounded-lg font-medium text-sm transition-all flex items-center gap-1.5 bg-warning text-white hover:bg-warning-600 active:scale-95"
+              class="py-2.5 px-4 rounded-lg font-medium text-sm transition-all flex items-center gap-1.5 bg-amber-500 dark:bg-amber-600 text-white hover:bg-amber-600 dark:hover:bg-amber-700 active:scale-95"
               @click="editTime('timeOut')"
             >
               <svg
@@ -278,13 +280,13 @@ const editPembiusan = () => {
           <h3 class="font-semibold text-slate-800 dark:text-slate-100 mb-1">
             Sign Out
           </h3>
-          <p class="text-sm text-slate-500 mb-4">
+          <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
             Review akhir prosedur
           </p>
 
           <div v-if="!checklistStatus.signOut">
             <button
-              class="w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 bg-success text-white hover:bg-success-600 active:scale-95"
+              class="w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 bg-emerald-500 dark:bg-emerald-600 text-white hover:bg-emerald-600 dark:hover:bg-emerald-700 active:scale-95"
               @click="recordTime('signOut')"
             >
               <svg
@@ -308,11 +310,11 @@ const editPembiusan = () => {
             v-else
             class="flex items-center justify-between"
           >
-            <span class="text-lg font-medium text-success">{{
-              signOutTime
-            }}</span>
+            <span
+              class="text-lg font-medium text-emerald-600 dark:text-emerald-400"
+            >{{ signOutTime }}</span>
             <button
-              class="py-2.5 px-4 rounded-lg font-medium text-sm transition-all flex items-center gap-1.5 bg-warning text-white hover:bg-warning-600 active:scale-95"
+              class="py-2.5 px-4 rounded-lg font-medium text-sm transition-all flex items-center gap-1.5 bg-amber-500 dark:bg-amber-600 text-white hover:bg-amber-600 dark:hover:bg-amber-700 active:scale-95"
               @click="editTime('signOut')"
             >
               <svg
@@ -337,17 +339,17 @@ const editPembiusan = () => {
 
     <!-- Team Verification Section -->
     <div>
-      <h2 class="text-lg font-semibold text-slate-800 mb-4">
+      <h2 class="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4">
         Verifikasi Tim Operasi
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div
           v-for="(member, index) in surgicalTeam"
           :key="index"
-          class="bg-white rounded-xl p-4 shadow-sm border border-slate-200 flex items-center gap-4 hover:shadow-md transition-shadow"
+          class="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700 flex items-center gap-4 hover:shadow-md transition-shadow"
         >
           <div
-            class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400"
+            class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500"
           >
             <svg
               class="w-6 h-6"
@@ -381,7 +383,7 @@ const editPembiusan = () => {
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <!-- Waktu Insisi -->
       <div
-        class="bg-white dark:bg-slate-900 rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-800"
+        class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-700"
       >
         <h3 class="font-semibold text-slate-800 dark:text-slate-100 mb-1">
           Waktu Insisi
@@ -392,10 +394,10 @@ const editPembiusan = () => {
           class="flex flex-col items-center text-center"
         >
           <div
-            class="w-16 h-16 rounded-full bg-amber-50 flex items-center justify-center mb-3"
+            class="w-16 h-16 rounded-full bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center mb-3"
           >
             <svg
-              class="w-8 h-8 text-amber-500"
+              class="w-8 h-8 text-amber-500 dark:text-amber-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -408,11 +410,11 @@ const editPembiusan = () => {
               />
             </svg>
           </div>
-          <p class="text-sm text-slate-500 mb-4">
+          <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
             Waktu insisi belum tercatat
           </p>
           <button
-            class="w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 bg-success text-white hover:bg-success-600 active:scale-95"
+            class="w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 bg-emerald-500 dark:bg-emerald-600 text-white hover:bg-emerald-600 dark:hover:bg-emerald-700 active:scale-95"
             @click="recordInsisi"
           >
             <svg
@@ -437,10 +439,10 @@ const editPembiusan = () => {
           class="flex flex-col items-center text-center"
         >
           <div
-            class="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mb-3"
+            class="w-16 h-16 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center mb-3"
           >
             <svg
-              class="w-8 h-8 text-emerald-500"
+              class="w-8 h-8 text-emerald-500 dark:text-emerald-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -453,11 +455,13 @@ const editPembiusan = () => {
               />
             </svg>
           </div>
-          <p class="text-sm font-semibold text-emerald-600 mb-4">
+          <p
+            class="text-2xl font-semibold text-emerald-600 dark:text-emerald-400 mb-4"
+          >
             {{ insisiTime }}
           </p>
           <button
-            class="w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 bg-warning text-white hover:bg-warning-600 active:scale-95"
+            class="w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 bg-amber-500 dark:bg-amber-600 text-white hover:bg-amber-600 dark:hover:bg-amber-700 active:scale-95"
             @click="editInsisi"
           >
             <svg
@@ -491,10 +495,10 @@ const editPembiusan = () => {
           class="flex flex-col items-center text-center"
         >
           <div
-            class="w-16 h-16 rounded-full bg-amber-50 flex items-center justify-center mb-3"
+            class="w-16 h-16 rounded-full bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center mb-3"
           >
             <svg
-              class="w-8 h-8 text-amber-500"
+              class="w-8 h-8 text-amber-500 dark:text-amber-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -511,7 +515,7 @@ const editPembiusan = () => {
             Waktu pembiusan belum tercatat
           </p>
           <button
-            class="w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 bg-success text-white hover:bg-success-600 active:scale-95"
+            class="w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 bg-emerald-500 dark:bg-emerald-600 text-white hover:bg-emerald-600 dark:hover:bg-emerald-700 active:scale-95"
             @click="recordPembiusan"
           >
             <svg
@@ -536,10 +540,10 @@ const editPembiusan = () => {
           class="flex flex-col items-center text-center"
         >
           <div
-            class="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mb-3"
+            class="w-16 h-16 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center mb-3"
           >
             <svg
-              class="w-8 h-8 text-emerald-500"
+              class="w-8 h-8 text-emerald-500 dark:text-emerald-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -552,11 +556,13 @@ const editPembiusan = () => {
               />
             </svg>
           </div>
-          <p class="text-sm font-semibold text-emerald-600 mb-4">
+          <p
+            class="text-2xl font-semibold text-emerald-600 dark:text-emerald-400 mb-4"
+          >
             {{ pembiusanTime }}
           </p>
           <button
-            class="w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 bg-warning text-white hover:bg-warning-600 active:scale-95"
+            class="w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 bg-amber-500 dark:bg-amber-600 text-white hover:bg-amber-600 dark:hover:bg-amber-700 active:scale-95"
             @click="editPembiusan"
           >
             <svg

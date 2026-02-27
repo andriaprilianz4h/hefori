@@ -84,9 +84,13 @@ const saveFinal = () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 space-y-6 transition-colors duration-300">
+  <div
+    class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 space-y-6 transition-colors duration-300"
+  >
     <!-- Header Card -->
-    <div class="bg-success rounded-2xl p-6 text-white shadow-lg">
+    <div
+      class="bg-emerald-500 dark:bg-emerald-600 rounded-2xl p-6 text-white shadow-lg"
+    >
       <h1 class="text-2xl font-bold">
         Laporan Operasi
       </h1>
@@ -96,41 +100,49 @@ const saveFinal = () => {
     </div>
 
     <!-- Diagnosis Section -->
-    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+    <div
+      class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700"
+    >
       <h2
-        class="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2"
+        class="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2"
       >
         <span
-          class="w-8 h-8 rounded-lg bg-emerald-100 text-sucbg-success flex items-center justify-center text-sm font-bold"
+          class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-bold"
         >1</span>
         Diagnosis
       </h2>
 
       <div class="grid grid-cols-1 gap-4">
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">A. Pre operasi (preoperative diagnosis)</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >A. Pre operasi (preoperative diagnosis)</label>
           <textarea
             v-model="form.preOperativeDiagnosis"
             rows="2"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
             placeholder="Internal bleeding transient respond to resuscitation, Suspek trauma renal D, perforasi hollow organ"
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">B. Durante operasi (Intraoperative diagnosis)</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >B. Durante operasi (Intraoperative diagnosis)</label>
           <textarea
             v-model="form.intraOperativeDiagnosis"
             rows="2"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">ICD-10</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >ICD-10</label>
           <select
             v-model="form.icd10"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
           >
             <option value="">
               Pilih kode ICD10
@@ -142,10 +154,10 @@ const saveFinal = () => {
       <!-- ICD Tag -->
       <div class="flex items-center gap-2 mt-3">
         <span
-          class="px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-lg text-sm font-medium border border-emerald-200"
+          class="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded-lg text-sm font-medium border border-emerald-200 dark:border-emerald-800"
         >S37.0 : Injury of kidney</span>
         <button
-          class="p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"
+          class="p-2 text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg transition-colors"
         >
           <svg
             class="w-4 h-4"
@@ -162,7 +174,7 @@ const saveFinal = () => {
           </svg>
         </button>
         <button
-          class="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
+          class="p-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-colors"
         >
           <svg
             class="w-4 h-4"
@@ -182,29 +194,35 @@ const saveFinal = () => {
     </div>
 
     <!-- Anestesi Section -->
-    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+    <div
+      class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700"
+    >
       <h2
-        class="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2"
+        class="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2"
       >
         <span
-          class="w-8 h-8 rounded-lg bg-emerald-100 text-sucbg-success flex items-center justify-center text-sm font-bold"
+          class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-bold"
         >2</span>
         Anestesi
       </h2>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Pre Medikasi</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >Pre Medikasi</label>
           <input
             v-model="form.preMedication"
             type="text"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
             placeholder="sesuai ts anestesi"
           >
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Jenis</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >Jenis</label>
           <div class="flex gap-2">
             <button
               v-for="type in anesthesiaTypes"
@@ -212,8 +230,8 @@ const saveFinal = () => {
               :class="[
                 'flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all',
                 form.anesthesiaType === type
-                  ? 'bg-success text-white'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-emerald-500 dark:bg-emerald-600 text-white'
+                  : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
               ]"
               @click="form.anesthesiaType = type"
             >
@@ -223,18 +241,22 @@ const saveFinal = () => {
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Bahan</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >Bahan</label>
           <input
             v-model="form.anesthesiaMaterial"
             type="text"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
             placeholder="sesuai ts anestesi"
           >
         </div>
 
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Intubasi</label>
+            <label
+              class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+            >Intubasi</label>
             <div class="flex gap-2">
               <button
                 v-for="opt in yesNoOptions"
@@ -242,8 +264,8 @@ const saveFinal = () => {
                 :class="[
                   'flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all',
                   form.intubation === opt
-                    ? 'bg-success text-white'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? 'bg-emerald-500 dark:bg-emerald-600 text-white'
+                    : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
                 ]"
                 @click="form.intubation = opt"
               >
@@ -253,7 +275,9 @@ const saveFinal = () => {
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Ektubasi</label>
+            <label
+              class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+            >Ektubasi</label>
             <div class="flex gap-2">
               <button
                 v-for="opt in yesNoOptions"
@@ -261,8 +285,8 @@ const saveFinal = () => {
                 :class="[
                   'flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all',
                   form.extubation === opt
-                    ? 'bg-success text-white'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? 'bg-emerald-500 dark:bg-emerald-600 text-white'
+                    : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
                 ]"
                 @click="form.extubation = opt"
               >
@@ -275,40 +299,48 @@ const saveFinal = () => {
     </div>
 
     <!-- Pembedahan Section -->
-    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+    <div
+      class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700"
+    >
       <h2
-        class="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2"
+        class="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2"
       >
         <span
-          class="w-8 h-8 rounded-lg bg-emerald-100 text-sucbg-success flex items-center justify-center text-sm font-bold"
+          class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-bold"
         >3</span>
         Pembedahan
       </h2>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Tanggal Mulai*</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >Tanggal Mulai*</label>
           <input
             v-model="form.startDate"
             type="datetime-local"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
           >
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Tanggal Selesai*</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >Tanggal Selesai*</label>
           <input
             v-model="form.endDate"
             type="datetime-local"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
           >
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Macam Operasi</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >Macam Operasi</label>
           <select
             v-model="form.surgeryType"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
           >
             <option value="">
               Bersih Kontaminasi
@@ -317,10 +349,12 @@ const saveFinal = () => {
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Golongan Operasi</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >Golongan Operasi</label>
           <select
             v-model="form.operationClass"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
           >
             <option
               v-for="opt in operationClasses"
@@ -333,10 +367,12 @@ const saveFinal = () => {
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Urgensi Operasi</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >Urgensi Operasi</label>
           <select
             v-model="form.urgency"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
           >
             <option
               v-for="opt in urgencyOptions"
@@ -349,20 +385,24 @@ const saveFinal = () => {
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Tindakan Operasi</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >Tindakan Operasi</label>
           <textarea
             v-model="form.procedureDescription"
             rows="2"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
             placeholder="Evaluasi zona 2 dan 3"
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">ICD9CM</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >ICD9CM</label>
           <select
             v-model="form.icd9cm"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
           >
             <option value="">
               ICD9CM
@@ -374,10 +414,10 @@ const saveFinal = () => {
       <!-- ICD9CM Tag -->
       <div class="flex items-center gap-2 mt-3">
         <span
-          class="px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-lg text-sm font-medium border border-emerald-200"
+          class="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded-lg text-sm font-medium border border-emerald-200 dark:border-emerald-800"
         >54.11 : Exploratory laparotomy</span>
         <button
-          class="p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"
+          class="p-2 text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg transition-colors"
         >
           <svg
             class="w-4 h-4"
@@ -394,7 +434,7 @@ const saveFinal = () => {
           </svg>
         </button>
         <button
-          class="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
+          class="p-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-colors"
         >
           <svg
             class="w-4 h-4"
@@ -414,7 +454,7 @@ const saveFinal = () => {
 
       <!-- Add Team Button -->
       <button
-        class="mt-4 bg-success text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors flex items-center gap-2 shadow-sm"
+        class="mt-4 bg-emerald-500 dark:bg-emerald-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-emerald-600 dark:hover:bg-emerald-700 transition-colors flex items-center gap-2 shadow-sm"
       >
         <svg
           class="w-4 h-4"
@@ -433,51 +473,55 @@ const saveFinal = () => {
       </button>
 
       <!-- Team Table -->
-      <div class="mt-4 border border-slate-200 rounded-xl overflow-hidden">
+      <div
+        class="mt-4 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden"
+      >
         <table class="w-full text-sm">
-          <thead class="bg-slate-50">
+          <thead class="bg-slate-50 dark:bg-slate-900/50">
             <tr>
               <th
-                class="px-4 py-3 text-left text-xs font-semibold text-slate-600"
+                class="px-4 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400"
               >
                 Nama Pelaksana
               </th>
               <th
-                class="px-4 py-3 text-left text-xs font-semibold text-slate-600"
+                class="px-4 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400"
               >
                 Nama PPDS Pelaksana
               </th>
               <th
-                class="px-4 py-3 text-left text-xs font-semibold text-slate-600"
+                class="px-4 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400"
               >
                 Posisi
               </th>
               <th
-                class="px-4 py-3 text-center text-xs font-semibold text-slate-600"
+                class="px-4 py-3 text-center text-xs font-semibold text-slate-600 dark:text-slate-400"
               >
                 Aksi
               </th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-200">
+          <tbody
+            class="divide-y divide-slate-200 dark:divide-slate-700 bg-white dark:bg-slate-800"
+          >
             <tr
               v-for="(member, index) in form.team"
               :key="index"
-              class="hover:bg-slate-50"
+              class="hover:bg-slate-50 dark:hover:bg-slate-700/50"
             >
-              <td class="px-4 py-3 text-slate-700">
+              <td class="px-4 py-3 text-slate-700 dark:text-slate-300">
                 {{ member.name }}
               </td>
-              <td class="px-4 py-3 text-slate-500">
+              <td class="px-4 py-3 text-slate-500 dark:text-slate-400">
                 {{ member.ppds }}
               </td>
-              <td class="px-4 py-3 text-slate-700">
+              <td class="px-4 py-3 text-slate-700 dark:text-slate-300">
                 {{ member.role }}
               </td>
               <td class="px-4 py-3">
                 <div class="flex justify-center gap-2">
                   <button
-                    class="p-1.5 bg-amber-400 text-white rounded-lg hover:bg-amber-500 transition-colors"
+                    class="p-1.5 bg-amber-400 dark:bg-amber-500 text-white rounded-lg hover:bg-amber-500 dark:hover:bg-amber-600 transition-colors"
                   >
                     <svg
                       class="w-4 h-4"
@@ -494,7 +538,7 @@ const saveFinal = () => {
                     </svg>
                   </button>
                   <button
-                    class="p-1.5 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors"
+                    class="p-1.5 bg-rose-500 dark:bg-rose-600 text-white rounded-lg hover:bg-rose-600 dark:hover:bg-rose-700 transition-colors"
                   >
                     <svg
                       class="w-4 h-4"
@@ -519,22 +563,26 @@ const saveFinal = () => {
     </div>
 
     <!-- Detail Operasi Section -->
-    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+    <div
+      class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700"
+    >
       <h2
-        class="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2"
+        class="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2"
       >
         <span
-          class="w-8 h-8 rounded-lg bg-emerald-100 text-sucbg-success flex items-center justify-center text-sm font-bold"
+          class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-bold"
         >4</span>
         Detail Operasi
       </h2>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Ronde</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >Ronde</label>
           <select
             v-model="form.round"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
           >
             <option
               v-for="opt in roundOptions"
@@ -547,10 +595,12 @@ const saveFinal = () => {
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Kamar Operasi</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >Kamar Operasi</label>
           <select
             v-model="form.operatingRoom"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
           >
             <option value="OK 100 - OK 100 - 002">
               OK 100 - OK 100 - 002
@@ -562,110 +612,134 @@ const saveFinal = () => {
       <!-- Numbered Fields -->
       <div class="space-y-4">
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Catatan Operator pre Operasi*</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >Catatan Operator pre Operasi*</label>
           <textarea
             v-model="form.preOpNotes"
             rows="2"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">1. Persiapan operasi (Profilaksis, Inform Consent)*</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >1. Persiapan operasi (Profilaksis, Inform Consent)*</label>
           <textarea
             v-model="form.prophylaxis"
             rows="2"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">2. Posisi Badan*</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >2. Posisi Badan*</label>
           <input
             v-model="form.position"
             type="text"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
           >
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">3. Desinfeksi*</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >3. Desinfeksi*</label>
           <input
             v-model="form.desinfection"
             type="text"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
           >
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">4. Insisi kulit dan pembukaan lapangan operasi*</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >4. Insisi kulit dan pembukaan lapangan operasi*</label>
           <input
             v-model="form.incision"
             type="text"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
           >
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">5. Pendapatan pada eksplorasi (Procedure findings)*</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >5. Pendapatan pada eksplorasi (Procedure findings)*</label>
           <textarea
             v-model="form.explorationFindings"
             rows="3"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
             placeholder="Melanjutkan Operasi TS Digestif..."
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">6. Deskripsi / Uraian Operasi (Procedure performed and
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >6. Deskripsi / Uraian Operasi (Procedure performed and
             description)*</label>
           <textarea
             v-model="form.procedureDetails"
             rows="3"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
             placeholder="Melanjutkan Operasi TS Digestif..."
           />
         </div>
 
         <!-- Upload Photo -->
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Upload Foto / Video Uraian Operasi</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >Upload Foto / Video Uraian Operasi</label>
           <input
             type="file"
-            class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"
+            class="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-emerald-50 dark:file:bg-emerald-900/50 file:text-emerald-700 dark:file:text-emerald-400 hover:file:bg-emerald-100 dark:hover:file:bg-emerald-900"
           >
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">7. Apa yang dikerjakan, Nama Operasi (Name of Operation)*</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >7. Apa yang dikerjakan, Nama Operasi (Name of Operation)*</label>
           <input
             v-model="form.operationName"
             type="text"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
           >
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">8. Komplikasi / Complications*</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >8. Komplikasi / Complications*</label>
           <textarea
             v-model="form.complications"
             rows="2"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">9. Penutupan lapangan operasi*</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >9. Penutupan lapangan operasi*</label>
           <input
             v-model="form.closure"
             type="text"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
           >
         </div>
 
         <!-- Implant Section -->
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">10. No. Registrasi Implant (registry number of implantable
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >10. No. Registrasi Implant (registry number of implantable
             devices)*</label>
           <div class="flex gap-2 mb-2">
             <button
@@ -674,8 +748,8 @@ const saveFinal = () => {
               :class="[
                 'flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all',
                 form.implant === opt
-                  ? 'bg-success text-white'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-emerald-500 dark:bg-emerald-600 text-white'
+                  : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
               ]"
               @click="form.implant = opt"
             >
@@ -686,73 +760,87 @@ const saveFinal = () => {
             v-if="form.implant === 'Ada'"
             v-model="form.implantNumber"
             type="text"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
             placeholder="Nomor registrasi implant"
           >
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">11. Jaringan yang dikirim ke lab. Patologi*</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >11. Jaringan yang dikirim ke lab. Patologi*</label>
           <input
             v-model="form.tissueSend"
             type="text"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
           >
         </div>
 
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">12. Pengiriman jaringan operasi, Berupa*</label>
+            <label
+              class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+            >12. Pengiriman jaringan operasi, Berupa*</label>
             <input
               v-model="form.specimenDestination"
               type="text"
-              class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+              class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
               placeholder="tidak ada"
             >
           </div>
           <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Kemana :</label>
+            <label
+              class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+            >Kemana :</label>
             <input
               type="text"
-              class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+              class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
             >
           </div>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">13. Hasil Operasi*</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >13. Hasil Operasi*</label>
           <input
             v-model="form.operationResult"
             type="text"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
           >
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">14. Instruksi Post Operasi</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >14. Instruksi Post Operasi</label>
           <textarea
             v-model="form.postOpInstructions"
             rows="2"
-            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:ring-emerald-600 dark:focus:border-emerald-600"
           />
         </div>
       </div>
     </div>
 
     <!-- Footer Options -->
-    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+    <div
+      class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700"
+    >
       <h2
-        class="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2"
+        class="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2"
       >
         <span
-          class="w-8 h-8 rounded-lg bg-emerald-100 text-sucbg-success flex items-center justify-center text-sm font-bold"
+          class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-bold"
         >5</span>
         Konfirmasi
       </h2>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Evaluasi Pasien</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >Evaluasi Pasien</label>
           <div class="flex gap-2">
             <button
               v-for="opt in ['Ya', 'Tidak']"
@@ -760,8 +848,8 @@ const saveFinal = () => {
               :class="[
                 'flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all',
                 form.patientEvaluation === opt
-                  ? 'bg-success text-white'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-emerald-500 dark:bg-emerald-600 text-white'
+                  : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
               ]"
               @click="form.patientEvaluation = opt"
             >
@@ -771,7 +859,9 @@ const saveFinal = () => {
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Apakah Laporan Operasi ini Dijadikan Template?</label>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >Apakah Laporan Operasi ini Dijadikan Template?</label>
           <div class="flex gap-2">
             <button
               v-for="opt in ['Ya', 'Tidak']"
@@ -779,8 +869,8 @@ const saveFinal = () => {
               :class="[
                 'flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all',
                 form.saveAsTemplate === opt
-                  ? 'bg-success text-white'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-emerald-500 dark:bg-emerald-600 text-white'
+                  : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
               ]"
               @click="form.saveAsTemplate = opt"
             >
@@ -794,18 +884,18 @@ const saveFinal = () => {
     <!-- Action Buttons -->
     <div class="flex justify-end gap-3">
       <button
-        class="px-6 py-2.5 border border-slate-300 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors"
+        class="px-6 py-2.5 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
       >
         Kembali
       </button>
       <button
-        class="px-6 py-2.5 bg-success text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors shadow-sm"
+        class="px-6 py-2.5 bg-emerald-500 dark:bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-600 dark:hover:bg-emerald-700 transition-colors shadow-sm"
         @click="saveDraft"
       >
         Simpan Draft
       </button>
       <button
-        class="px-6 py-2.5 bg-rose-500 text-white rounded-lg text-sm font-medium hover:bg-rose-600 transition-colors shadow-sm"
+        class="px-6 py-2.5 bg-rose-500 dark:bg-rose-600 text-white rounded-lg text-sm font-medium hover:bg-rose-600 dark:hover:bg-rose-700 transition-colors shadow-sm"
         @click="saveFinal"
       >
         Simpan Final

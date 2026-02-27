@@ -80,7 +80,7 @@ function toggleMobileSearch() {
       </button>
 
       <span class="lg:hidden text-lg font-bold text-gray-800 dark:text-white">
-        PRO<span class="text-green-600">CIS</span>
+        OPTI<span class="text-green-600">MUM</span>
       </span>
     </div>
 
