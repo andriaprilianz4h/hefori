@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Optimum from '@/assets/img/Optimum.png'
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import {
@@ -33,17 +34,17 @@ interface Menu {
 
 const menus: Menu[] = [
   { name: 'Dashboard', icon: 'heroicons:squares-2x2', to: '/dashboard' },
-  { name: 'Booking', icon: 'heroicons:calendar-days', to: '/booking' },
-  {
-    name: 'Verifikasi Pra-Bedah',
-    icon: 'heroicons:clipboard-document-check',
-    to: '/verifikasi-pra-bedah'
-  },
-  {
-    name: 'Manajemen IBP',
-    icon: 'heroicons:building-office-2',
-    to: '/manajemen-ibp'
-  },
+  // { name: 'Booking', icon: 'heroicons:calendar-days', to: '/booking' },
+  // {
+  //   name: 'Verifikasi Pra-Bedah',
+  //   icon: 'heroicons:clipboard-document-check',
+  //   to: '/verifikasi-pra-bedah'
+  // },
+  // {
+  //   name: 'Manajemen IBP',
+  //   icon: 'heroicons:building-office-2',
+  //   to: '/manajemen-ibp'
+  // },
   {
     name: 'Serah Terima',
     icon: 'heroicons:arrows-right-left',
@@ -64,6 +65,7 @@ function isActiveMenu(item: Menu): boolean {
 }
 
 const sidebarRef = ref<HTMLElement | null>(null)
+const emit = defineEmits(['logout'])
 
 onClickOutside(sidebarRef, () => {
   if (isMobile.value && isMobileOpen.value) {
@@ -118,20 +120,14 @@ function toggleSidebar() {
             isCollapsed ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden' : ''
           ]"
         >
-          <div class="relative">
-            <div
-              class="absolute inset-0 bg-green-500 blur-lg opacity-30 rounded-full"
-            />
-            <div
-              class="relative w-10 h-10 rounded-xl bg-linear-to-brrom-green-400 to-emerald-600 flex items-center justify-center text-white font-bold shadow-lg"
+          <div class="flex items-center justify-center">
+            <img
+              :src="Optimum"
+              alt="Optimum Logo"
+              class="w-10 h-10 object-contain drop-shadow-md"
             >
-              <img
-                src="/logo.png"
-                alt="Logo"
-                class="w-12 h-12 object-contain"
-              >
-            </div>
           </div>
+
           <div>
             <h1
               class="text-xl font-bold bg-linear-to-r from-slate-800 to-slate-600 dark:from-white dark:to-slate-300 bg-clip-text text-transparent"
@@ -301,6 +297,7 @@ function toggleSidebar() {
               'p-2 rounded-xl text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-300',
               isCollapsed ? 'lg:hidden' : ''
             ]"
+            @click="emit('logout')"
           >
             <UIcon
               name="heroicons:arrow-right-on-rectangle"

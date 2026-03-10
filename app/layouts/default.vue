@@ -21,13 +21,20 @@ onMounted(() => {
 onUnmounted(() => {
   mainRef.value?.removeEventListener('scroll', handleScroll)
 })
+const showLogoutModal = ref(false)
+
+const logout = () => {
+  showLogoutModal.value = false
+  localStorage.removeItem('token')
+  navigateTo('/login')
+}
 </script>
 
 <template>
   <div
     class="h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 flex transition-colors duration-500"
   >
-    <AppSidebar />
+    <AppSidebar @logout="showLogoutModal = true" />
 
     <div class="flex-1 flex flex-col relative">
       <header
@@ -36,6 +43,7 @@ onUnmounted(() => {
         <AppHeader
           title="Dashboard"
           subtitle="Monitoring & Sistem Informasi"
+          @logout="showLogoutModal = true"
         />
       </header>
 
@@ -85,6 +93,39 @@ onUnmounted(() => {
         </div>
       </button>
     </Transition>
+    <Teleport to="body">
+      <div
+        v-if="showLogoutModal"
+        class="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-[9999]"
+        @click.self="showLogoutModal = false"
+      >
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-80 shadow-xl">
+          <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">
+            Konfirmasi Logout
+          </h2>
+
+          <p class="text-sm text-gray-600 dark:text-gray-300 mb-6">
+            Apakah Anda yakin ingin keluar dari sistem?
+          </p>
+
+          <div class="flex justify-end gap-3">
+            <button
+              class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300"
+              @click="showLogoutModal = false"
+            >
+              Batal
+            </button>
+
+            <button
+              class="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white"
+              @click="logout"
+            >
+              Keluar
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 

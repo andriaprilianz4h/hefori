@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Optimum from '@/assets/img/Optimum.png'
+
 const stats = [
   { value: '7+', label: 'Modul Terintegrasi' },
   { value: '24/7', label: 'Real-time Monitoring' },
@@ -27,27 +29,25 @@ const stats = [
 
     <div class="relative z-10 flex flex-col justify-center px-12 text-white">
       <div class="flex items-center gap-3 mb-8">
-        <div
-          class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center"
-        >
+        <div class="w-20 h-20 flex items-center justify-center">
           <img
-            src="/logo.png"
+            :src="Optimum"
             alt="Logo"
-            class="w-32 h-32 object-contain"
+            class="w-full h-full object-contain drop-shadow-lg"
           >
         </div>
         <div>
-          <h1 class="text-3xl font-bold">
-            <span class="text-yellow-400">Opti</span><span class="text-white">mum</span>
+          <h1 class="text-5xl font-bold">
+            <span class="text-yellow-400">OPTI</span><span class="text-white">MUM</span>
           </h1>
-          <p class="text-white/80 text-sm">
+          <!-- <p class="text-white/80 text-sm">
             Surgical Management System
-          </p>
+          </p> -->
         </div>
       </div>
 
       <h2 class="text-4xl font-bold mb-4 leading-tight">
-        Sistem Manajemen<br>Operasi Terintegrasi
+        Operating Theatre Improvement, Maintenance,<br>and Utilization Metrics (OPTIMUM)
       </h2>
       <p class="text-lg text-white/90 mb-8 leading-relaxed">
         Platform digital untuk mengelola seluruh proses operasi dari penjadwalan

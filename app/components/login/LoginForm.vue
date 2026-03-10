@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Optimum from '@/assets/img/Optimum.png'
+
 const emit = defineEmits<{
   submit: [data: { email: string, password: string }]
 }>()
@@ -22,17 +24,16 @@ const handleSubmit = () => {
   >
     <div class="w-full max-w-md">
       <!-- Mobile Logo -->
-      <div class="lg:hidden flex items-center justify-center mb-8">
-        <div
-          class="w-12 h-12 bg-linear-to-br from-primary-600 to-primary-800 rounded-lg flex items-center justify-center"
+      <div class="lg:hidden flex flex-col items-center justify-center mb-8">
+        <img
+          :src="Optimum"
+          alt="Optimum Logo"
+          class="w-14 h-14 object-contain drop-shadow-lg"
         >
-          <UIcon
-            name="i-lucide-activity-square"
-            class="w-7 h-7 text-white"
-          />
-        </div>
-        <h1 class="text-2xl font-bold ml-3">
-          <span class="text-yellow-500">Opti</span><span class="text-gray-900 dark:text-white">mum</span>
+
+        <h1 class="text-2xl font-bold mt-2 tracking-wide">
+          <span class="text-yellow-500">OPTI</span>
+          <span class="text-gray-900 dark:text-white">MUM</span>
         </h1>
       </div>
 
@@ -54,14 +55,14 @@ const handleSubmit = () => {
           @submit="handleSubmit"
         >
           <UFormField
-            label="Username"
+            label="NIP/NIPTT-PK/NIM"
             name="Username"
             required
           >
             <UInput
               v-model="formData.email"
               type="text"
-              placeholder="Username"
+              placeholder="NIP/NIPTT-PK/NIM"
               icon="i-lucide-user"
               size="lg"
               class="w-full"
@@ -107,7 +108,7 @@ const handleSubmit = () => {
 
         <template #footer>
           <div class="text-center text-sm text-gray-500 dark:text-gray-400">
-            Gunakan Username dan password untuk masuk
+            Gunakan NIP/NIPTT-PK/NIM dan password untuk masuk
           </div>
         </template>
       </UCard>

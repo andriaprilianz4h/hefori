@@ -22,10 +22,13 @@ const weeklyOptions = computed(() => ({
     background: 'transparent',
     foreColor: colorMode.value === 'dark' ? '#94a3b8' : '#64748b'
   },
+
   theme: {
     mode: colorMode.value === 'dark' ? 'dark' : 'light'
   },
+
   colors: ['#22c55e'],
+
   plotOptions: {
     bar: {
       borderRadius: 8,
@@ -33,7 +36,9 @@ const weeklyOptions = computed(() => ({
       distributed: false
     }
   },
+
   dataLabels: { enabled: false },
+
   xaxis: {
     categories: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
     axisBorder: { show: false },
@@ -45,6 +50,7 @@ const weeklyOptions = computed(() => ({
       }
     }
   },
+
   yaxis: {
     labels: {
       style: {
@@ -52,11 +58,13 @@ const weeklyOptions = computed(() => ({
       }
     }
   },
+
   grid: {
     borderColor: colorMode.value === 'dark' ? '#1e293b' : '#e2e8f0',
     strokeDashArray: 4,
     yaxis: { lines: { show: true } }
   },
+
   fill: {
     type: 'gradient',
     gradient: {
@@ -70,6 +78,7 @@ const weeklyOptions = computed(() => ({
       stops: [0, 100]
     }
   },
+
   tooltip: {
     theme: colorMode.value === 'dark' ? 'dark' : 'light',
     style: {
@@ -80,7 +89,41 @@ const weeklyOptions = computed(() => ({
         return val + ' operasi'
       }
     }
-  }
+  },
+
+  /* ✅ RESPONSIVE MOBILE OPTIMIZATION */
+  responsive: [
+    {
+      breakpoint: 1024,
+      options: {
+        plotOptions: {
+          bar: {
+            columnWidth: '60%'
+          }
+        }
+      }
+    },
+    {
+      breakpoint: 640,
+      options: {
+        chart: {
+          height: 260
+        },
+        plotOptions: {
+          bar: {
+            columnWidth: '70%'
+          }
+        },
+        xaxis: {
+          labels: {
+            style: {
+              fontSize: '11px'
+            }
+          }
+        }
+      }
+    }
+  ]
 }))
 
 /* ================= DONUT ================= */
@@ -239,7 +282,7 @@ const schedules = [
 
 <template>
   <div
-    class="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 space-y-6 transition-colors duration-300"
+    class="min-h-screen bg-slate-50 dark:bg-slate-950 p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6 transition-colors duration-300"
   >
     <!-- Header Section -->
     <div
@@ -268,7 +311,7 @@ const schedules = [
     </div>
 
     <!-- ================= STAT CARDS ================= -->
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
       <UCard
         v-for="stat in stats"
         :key="stat.title"
@@ -277,9 +320,7 @@ const schedules = [
           'bg-white dark:bg-slate-900/50 backdrop-blur-sm',
           'border-0 shadow-sm dark:shadow-slate-900/20'
         ]"
-        :ui="{
-          body: 'p-6'
-        }"
+        :ui="{ body: 'p-4 sm:p-6' }"
       >
         <!-- Background Gradient Effect -->
         <div
@@ -353,10 +394,10 @@ const schedules = [
     </div>
 
     <!-- ================= CHARTS ================= -->
-    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
       <!-- BAR CHART -->
       <UCard
-        class="xl:col-span-2"
+        class="sm:col-span-2 xl:col-span-2"
         :class="[
           'bg-white dark:bg-slate-900/50 backdrop-blur-sm',
           'border-0 shadow-sm dark:shadow-slate-900/20'
@@ -391,7 +432,9 @@ const schedules = [
       </UCard>
 
       <!-- DONUT CHART -->
+      <!-- DONUT CHART -->
       <UCard
+        class="sm:col-span-2 xl:col-span-1"
         :class="[
           'bg-white dark:bg-slate-900/50 backdrop-blur-sm',
           'border-0 shadow-sm dark:shadow-slate-900/20'
@@ -410,7 +453,7 @@ const schedules = [
         <ClientOnly>
           <apexchart
             type="donut"
-            height="320"
+            :height="colorMode.value === 'dark' ? 260 : 260"
             :options="donutOptions"
             :series="donutSeries"
           />
