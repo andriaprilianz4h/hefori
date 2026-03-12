@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Optimum from '@/assets/img/Optimum.png'
+import hefori from '@/assets/img/hefori-icon.png'
 
 const stats = [
   { value: '7+', label: 'Modul Terintegrasi' },
@@ -31,14 +31,14 @@ const stats = [
       <div class="flex items-center gap-3 mb-8">
         <div class="w-20 h-20 flex items-center justify-center">
           <img
-            :src="Optimum"
+            :src="hefori"
             alt="Logo"
             class="w-full h-full object-contain drop-shadow-lg"
           >
         </div>
         <div>
           <h1 class="text-5xl font-bold">
-            <span class="text-yellow-400">OPTI</span><span class="text-white">MUM</span>
+            <span class="text-yellow-400">HEF</span><span class="text-white">ORI</span>
           </h1>
           <!-- <p class="text-white/80 text-sm">
             Surgical Management System
@@ -47,11 +47,10 @@ const stats = [
       </div>
 
       <h2 class="text-4xl font-bold mb-4 leading-tight">
-        Operating Theatre Improvement, Maintenance,<br>and Utilization Metrics (OPTIMUM)
+        Health Workforce Monitoring System <br> (HEFORI)
       </h2>
       <p class="text-lg text-white/90 mb-8 leading-relaxed">
-        Platform digital untuk mengelola seluruh proses operasi dari penjadwalan
-        hingga pelaporan dengan efisien dan aman.
+        Platform digital untuk Monitoring Kesehatan Pegawai di Lingkungan RSUD Dr. Soetomo dengan SmartWatch sebagai alat utama untuk pengumpulan data kesehatan secara real-time.
       </p>
 
       <div class="grid grid-cols-3 gap-4 mt-8">

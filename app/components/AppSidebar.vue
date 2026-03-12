@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Optimum from '@/assets/img/Optimum.png'
+import hefori from '@/assets/img/hefori-icon.png'
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import {
@@ -11,17 +11,18 @@ import {
 } from '@vueuse/core'
 
 const route = useRoute()
-
 const { width } = useWindowSize()
 const isMobile = computed(() => width.value < 1024)
 
+// Sidebar state
 const isCollapsed = useStorage('sidebar-collapsed', false)
 const isMobileOpen = useState<boolean>('sidebarMobileOpen', () => false)
 
-// Dark mode state
+// Dark mode
 const isDark = useDark()
-const toggleDark = useToggle(isDark)
+const _toggleDark = useToggle(isDark)
 
+// Auto close mobile sidebar
 watch(isMobile, (mobile) => {
   if (!mobile) isMobileOpen.value = false
 })
@@ -32,30 +33,18 @@ interface Menu {
   to: string
 }
 
+// === MENU TERBARU SESUAI SARAN ===
 const menus: Menu[] = [
   { name: 'Dashboard', icon: 'heroicons:squares-2x2', to: '/dashboard' },
-  // { name: 'Booking', icon: 'heroicons:calendar-days', to: '/booking' },
-  // {
-  //   name: 'Verifikasi Pra-Bedah',
-  //   icon: 'heroicons:clipboard-document-check',
-  //   to: '/verifikasi-pra-bedah'
-  // },
-  // {
-  //   name: 'Manajemen IBP',
-  //   icon: 'heroicons:building-office-2',
-  //   to: '/manajemen-ibp'
-  // },
+  { name: 'Staff', icon: 'heroicons:user-group', to: '/staff' },
+  { name: 'Devices', icon: 'heroicons:device-phone-mobile', to: '/devices' },
   {
-    name: 'Serah Terima',
-    icon: 'heroicons:arrows-right-left',
-    to: '/serah-terima'
+    name: 'Health Alerts',
+    icon: 'heroicons:exclamation-triangle',
+    to: '/alerts'
   },
-  {
-    name: 'Durante Operasi',
-    icon: 'heroicons:plus-circle',
-    to: '/durante-operasi'
-  },
-  { name: 'Laporan', icon: 'heroicons:document-text', to: '/laporan' }
+  { name: 'Reports', icon: 'heroicons:document-text', to: '/reports' },
+  { name: 'Settings', icon: 'heroicons:cog-6-tooth', to: '/settings' }
 ]
 
 const currentPath = computed(() => route.path)
@@ -74,17 +63,14 @@ onClickOutside(sidebarRef, () => {
 })
 
 function toggleSidebar() {
-  if (isMobile.value) {
-    isMobileOpen.value = !isMobileOpen.value
-  } else {
-    isCollapsed.value = !isCollapsed.value
-  }
+  if (isMobile.value) isMobileOpen.value = !isMobileOpen.value
+  else isCollapsed.value = !isCollapsed.value
 }
 </script>
 
 <template>
   <div>
-    <!-- Overlay Mobile dengan Glassmorphism -->
+    <!-- Overlay Mobile -->
     <Transition name="fade">
       <div
         v-if="isMobileOpen && isMobile"
@@ -107,7 +93,7 @@ function toggleSidebar() {
         isMobileOpen ? 'translate-x-0' : '-translate-x-full'
       ]"
     >
-      <!-- Header dengan Gradient -->
+      <!-- Header -->
       <div
         :class="[
           'h-16 flex items-center px-5 border-b border-gray-200/50 dark:border-slate-700/50',
@@ -120,21 +106,16 @@ function toggleSidebar() {
             isCollapsed ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden' : ''
           ]"
         >
-          <div class="flex items-center justify-center">
-            <img
-              :src="Optimum"
-              alt="Optimum Logo"
-              class="w-10 h-10 object-contain drop-shadow-md"
-            >
-          </div>
-
-          <div>
-            <h1
-              class="text-xl font-bold bg-linear-to-r from-slate-800 to-slate-600 dark:from-white dark:to-slate-300 bg-clip-text text-transparent"
-            >
-              OPTI<span class="text-green-500">MUM</span>
-            </h1>
-          </div>
+          <img
+            :src="hefori"
+            alt="Logo"
+            class="w-10 h-10 object-contain drop-shadow-md"
+          >
+          <h1
+            class="text-xl font-bold bg-linear-to-r from-slate-800 to-slate-600 dark:from-white dark:to-slate-300 bg-clip-text text-transparent"
+          >
+            HEF<span class="text-green-500">ORI</span>
+          </h1>
         </div>
 
         <button
@@ -149,7 +130,7 @@ function toggleSidebar() {
         </button>
       </div>
 
-      <!-- Menu dengan Hover Effects -->
+      <!-- Menu -->
       <nav
         class="flex-1 px-3 py-6 space-y-2 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-slate-700 scrollbar-track-transparent"
       >
@@ -166,19 +147,14 @@ function toggleSidebar() {
           ]"
           :style="{ animationDelay: `${index * 50}ms` }"
         >
-          <!-- Background Hover Effect -->
           <div
             v-if="!isActiveMenu(item)"
             class="absolute inset-0 bg-linear-to-r from-green-500/0 via-green-500/5 to-green-500/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"
           />
-
-          <!-- Active Indicator -->
           <div
             v-if="isActiveMenu(item)"
             class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-white rounded-r-full shadow-[0_0_10px_rgba(255,255,255,0.5)]"
           />
-
-          <!-- Icon dengan Glow Effect -->
           <div class="relative">
             <div
               v-if="isActiveMenu(item)"
@@ -194,8 +170,6 @@ function toggleSidebar() {
               "
             />
           </div>
-
-          <!-- Text dengan Animation -->
           <span
             :class="[
               'relative z-10 font-medium whitespace-nowrap transition-all duration-500',
@@ -206,8 +180,6 @@ function toggleSidebar() {
           >
             {{ item.name }}
           </span>
-
-          <!-- Active Arrow -->
           <UIcon
             v-if="isActiveMenu(item) && !isCollapsed"
             name="heroicons:chevron-right"
@@ -216,41 +188,7 @@ function toggleSidebar() {
         </NuxtLink>
       </nav>
 
-      <!-- Dark Mode Toggle Section -->
-      <div class="px-3 pb-2">
-        <button
-          :class="[
-            'w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all duration-300 group',
-            'bg-gray-100 dark:bg-slate-800/50 hover:bg-gray-200 dark:hover:bg-slate-700/50',
-            'border border-gray-200 dark:border-slate-700/50',
-            isCollapsed ? 'lg:justify-center' : ''
-          ]"
-          @click="toggleDark()"
-        >
-          <div class="relative w-5 h-5">
-            <UIcon
-              name="heroicons:sun"
-              class="w-5 h-5 absolute inset-0 text-amber-500 transition-all duration-500 rotate-0 scale-100 dark:rotate-90 dark:scale-0"
-            />
-            <UIcon
-              name="heroicons:moon"
-              class="w-5 h-5 absolute inset-0 text-indigo-400 transition-all duration-500 -rotate-90 scale-0 dark:rotate-0 dark:scale-100"
-            />
-          </div>
-          <span
-            :class="[
-              'text-sm font-medium text-gray-700 dark:text-slate-300 whitespace-nowrap transition-all duration-500',
-              isCollapsed
-                ? 'lg:opacity-0 lg:w-0 lg:overflow-hidden'
-                : 'opacity-100'
-            ]"
-          >
-            {{ isDark ? "Mode Gelap" : "Mode Terang" }}
-          </span>
-        </button>
-      </div>
-
-      <!-- Footer dengan Glass Effect -->
+      <!-- User & Logout -->
       <div
         class="p-4 mx-3 mb-3 rounded-2xl bg-linear-to-br from-gray-50 to-gray-100 dark:from-slate-800/50 dark:to-slate-900/50 border border-gray-200/50 dark:border-slate-700/50 backdrop-blur-sm"
       >
@@ -273,7 +211,6 @@ function toggleSidebar() {
               class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"
             />
           </div>
-
           <div
             :class="[
               'flex-1 min-w-0 transition-all duration-500',
@@ -291,7 +228,6 @@ function toggleSidebar() {
               Administrator
             </p>
           </div>
-
           <button
             :class="[
               'p-2 rounded-xl text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-300',
@@ -311,7 +247,6 @@ function toggleSidebar() {
 </template>
 
 <style scoped>
-/* Custom Scrollbar */
 .scrollbar-thin::-webkit-scrollbar {
   width: 5px;
 }
@@ -325,8 +260,6 @@ function toggleSidebar() {
 .dark .scrollbar-thin::-webkit-scrollbar-thumb {
   background-color: rgba(71, 85, 105, 0.5);
 }
-
-/* Fade Transition */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.4s ease;
@@ -335,13 +268,9 @@ function toggleSidebar() {
 .fade-leave-to {
   opacity: 0;
 }
-
-/* Smooth Scroll Behavior */
 nav {
   scroll-behavior: smooth;
 }
-
-/* Selection Color */
 ::selection {
   background-color: rgba(34, 197, 94, 0.2);
   color: inherit;

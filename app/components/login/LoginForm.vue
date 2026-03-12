@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Optimum from '@/assets/img/Optimum.png'
+import hefori from '@/assets/img/hefori-icon.png'
 
 const emit = defineEmits<{
   submit: [data: { email: string, password: string }]
@@ -26,14 +26,14 @@ const handleSubmit = () => {
       <!-- Mobile Logo -->
       <div class="lg:hidden flex flex-col items-center justify-center mb-8">
         <img
-          :src="Optimum"
-          alt="Optimum Logo"
+          :src="hefori"
+          alt="logo"
           class="w-14 h-14 object-contain drop-shadow-lg"
         >
 
         <h1 class="text-2xl font-bold mt-2 tracking-wide">
-          <span class="text-yellow-500">OPTI</span>
-          <span class="text-gray-900 dark:text-white">MUM</span>
+          <span class="text-yellow-500">HEF</span>
+          <span class="text-gray-900 dark:text-white">ORI</span>
         </h1>
       </div>
 
@@ -114,7 +114,7 @@ const handleSubmit = () => {
       </UCard>
 
       <p class="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
-        © 2026 Optimum. All rights reserved.
+        © 2026 Hefori. All rights reserved.
       </p>
     </div>
   </div>
